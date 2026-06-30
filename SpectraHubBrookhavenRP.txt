@@ -1,4 +1,4 @@
-local Library = loadstring(game:HttpGet("https://pastefy.app/ptT2xWaK/raw"))()
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/naoseidenadacaranaonao/Testando/refs/heads/main/LibRedzSpectraHub.txt"))()
 
 local Window = Library:MakeWindow({
     Title = " Spectra HUB   | Brookhaven RP 🏡",
