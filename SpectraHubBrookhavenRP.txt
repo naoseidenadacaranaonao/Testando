@@ -1,0 +1,3343 @@
+local Library = loadstring(game:HttpGet("https://pastefy.app/ptT2xWaK/raw"))()
+
+local Window = Library:MakeWindow({
+    Title = " Spectra HUB   | Brookhaven RP 🏡",
+    SubTitle = "🔥 by assure | version hub 1.92.8",
+    Logo = "rbxassetid://15464429993",
+    TitleSize = 19,
+    SaveFolder = "Spectra hub"
+})
+
+Window:AddMinimizeButton({
+    Button = {
+        Image = "rbxassetid://116857504291644",
+        BackgroundTransparency = 0,
+        Size = UDim2.new(0, 40, 0, 40),
+        ScaleType = Enum.ScaleType.Fit
+    },
+    Corner = { CornerRadius = UDim.new(35, 1) }
+})
+
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
+local TweenService = game:GetService("TweenService")
+local UserInputService = game:GetService("UserInputService")
+local Workspace = game:GetService("Workspace")
+local CoreGui = game:GetService("CoreGui")
+local StarterGui = game:GetService("StarterGui")
+local HttpService = game:GetService("HttpService")
+local SoundService = game:GetService("SoundService")
+local TeleportService = game:GetService("TeleportService")
+
+local RemoteEvents = ReplicatedStorage:WaitForChild("Remotes")
+local RE = ReplicatedStorage:WaitForChild("RE")
+local PlayerRE = RE:WaitForChild("1Player1sHous1e")
+
+local function FireRemote(remoteName, ...)
+    local remote = RE:FindFirstChild(remoteName)
+    if remote then
+        pcall(function() remote:FireServer(...) end)
+    end
+end
+
+local function InvokeRemote(remoteName, ...)
+    local remote = RE:FindFirstChild(remoteName)
+    if remote then
+        return pcall(function() return remote:InvokeServer(...) end)
+    end
+    return false
+end
+
+local function GetPlayerList()
+    local list = {}
+    for _, player in pairs(Players:GetPlayers()) do
+        if player ~= LocalPlayer then
+            table.insert(list, player.Name)
+        end
+    end
+    return list
+end
+
+local function RGBColor(speed)
+    return Color3.fromHSV(tick() * speed % 10 / 10, 1, 1)
+end
+
+local function ApplyBody(ids)
+    RemoteEvents.ChangeCharacterBody:InvokeServer(ids)
+end
+
+local function GetPropSitProps()
+    local props = {}
+    local workspaceCom = Workspace:FindFirstChild("WorkspaceCom")
+    if not workspaceCom then return props end
+    for _, child in pairs(workspaceCom:GetChildren()) do
+        for _, prop in pairs(child:GetChildren()) do
+            if prop:FindFirstChild("SetCurrentCFrame") then
+                table.insert(props, prop)
+            end
+        end
+    end
+    return props
+end
+
+local function GetHahaPlayers()
+    local players = {}
+    for _, player in pairs(Players:GetPlayers()) do
+        if player ~= LocalPlayer and player.Character and
+           player.Character:FindFirstChild("HumanoidRootPart") and
+           player.Character:FindFirstChild("Humanoid") then
+            table.insert(players, player)
+        end
+    end
+    return players
+end
+
+local ConfigsTab = Window:MakeTab({ "Configs", "rbxassetid://129976834233471" })
+local CreditsTab = Window:MakeTab({ "Credits", "rbxassetid://7733658271" })
+local FunTab = Window:MakeTab({ "fun", "rbxassetid://7733765398" })
+local AvatarTab = Window:MakeTab({ "Avatar", "rbxassetid://105837152438777" })
+local ItemsTab = Window:MakeTab({ "ITENS ALL", "rbxassetid://11860859170" })
+local HouseTab = Window:MakeTab({ "House", "rbxassetid://8301879545" })
+local FETab = Window:MakeTab({ "FE", "rbxassetid://71023809654860" })
+local CarTab = Window:MakeTab({ "Car", "rbxassetid://7733708835" })
+local TrollTab = Window:MakeTab({ "Troll", "rbxassetid://7734058599" })
+local PropsTab = Window:MakeTab({ "Props", "rbxassetid://12120687742" })
+local SkyboxTab = Window:MakeTab({ "skybox", "rbxassetid://7733746980" })
+local MusicAllTab = Window:MakeTab({ "Music All", "rbxassetid://10734900215" })
+local MusicTab = Window:MakeTab({ "Music", "rbxassetid://10734905823" })
+local RGBTab = Window:MakeTab({ "RGB", "rbxassetid://15330618083" })
+local ProtectionTab = Window:MakeTab({ "Protection", "rbxassetid://7734056608" })
+
+CreditsTab:AddSection({ "Creditos do Hub" })
+CreditsTab:AddDiscordInvite({
+    Name = "Spectra Hub",
+    Description = "Comunidade oficial do Hub",
+    Logo = "rbxassetid://116857504291644"
+})
+CreditsTab:AddParagraph("Executor", identifyexecutor() or "Executor Desconhecido")
+CreditsTab:AddParagraph("Jogador", LocalPlayer.Name)
+CreditsTab:AddSection({ "Desenvolvedores" })
+CreditsTab:AddParagraph("Desenvolvedor Principal", "assure_TV")
+CreditsTab:AddParagraph("Ajudantes", "denolk_new")
+CreditsTab:AddParagraph("Projeto", "Spectra Hub")
+CreditsTab:AddParagraph("Contas Roblox do assure_TV", "udydydi2usy6d6d")
+CreditsTab:AddSection({ "Mídia" })
+CreditsTab:AddButton({
+    Name = "Copiar Canal do YouTube do assure",
+    Callback = function()
+        if setclipboard then
+            setclipboard("assure_TV\nhttps://www.youtube.com/@assure_TV")
+        end
+    end
+})
+
+FunTab:AddSection({ "Status do Player" })
+local SpeedSlider = FunTab:AddSlider({
+    Name = "Speed",
+    Min = 1,
+    Max = 2000,
+    Default = 16,
+    Callback = function(value)
+        if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid") then
+            LocalPlayer.Character.Humanoid.WalkSpeed = value
+        end
+    end
+})
+local JumpSlider = FunTab:AddSlider({
+    Name = "Jump",
+    Min = 1,
+    Max = 2000,
+    Default = 50,
+    Callback = function(value)
+        if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid") then
+            LocalPlayer.Character.Humanoid.JumpPower = value
+        end
+    end
+})
+local GravitySlider = FunTab:AddSlider({
+    Name = "Gravity",
+    Min = 1,
+    Max = 2000,
+    Default = 196,
+    Callback = function(value)
+        Workspace.Gravity = value
+    end
+})
+FunTab:AddButton({
+    Name = "Resetar Status",
+    Callback = function()
+        if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid") then
+            LocalPlayer.Character.Humanoid.WalkSpeed = 16
+            LocalPlayer.Character.Humanoid.JumpPower = 50
+        end
+        Workspace.Gravity = 196
+    end
+})
+
+FunTab:AddSection({ "Movimento" })
+local InfinityJumpEnabled = false
+FunTab:AddToggle({
+    Name = "Infinity Jump",
+    Default = false,
+    Callback = function(value)
+        InfinityJumpEnabled = value
+    end
+})
+UserInputService.JumpRequest:Connect(function()
+    if InfinityJumpEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid") then
+        LocalPlayer.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+    end
+end)
+
+local NoclipEnabled = false
+FunTab:AddToggle({
+    Name = "Noclip",
+    Default = false,
+    Callback = function(value)
+        NoclipEnabled = value
+    end
+})
+RunService.Stepped:Connect(function()
+    if NoclipEnabled and LocalPlayer.Character then
+        for _, part in pairs(LocalPlayer.Character:GetDescendants()) do
+            if part:IsA("BasePart") then
+                part.CanCollide = false
+            end
+        end
+    end
+end)
+
+FunTab:AddSection({ "Spin" })
+local SpinEnabled = false
+local SpinSpeed = 50
+FunTab:AddSlider({
+    Name = "Speed Spin",
+    Min = 1,
+    Max = 2500,
+    Default = 50,
+    Callback = function(value)
+        SpinSpeed = value
+    end
+})
+FunTab:AddToggle({
+    Name = "Spin",
+    Default = false,
+    Callback = function(value)
+        SpinEnabled = value
+    end
+})
+RunService.RenderStepped:Connect(function()
+    if SpinEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+        LocalPlayer.Character.HumanoidRootPart.CFrame = LocalPlayer.Character.HumanoidRootPart.CFrame * CFrame.Angles(0, math.rad(SpinSpeed), 0)
+    end
+end)
+
+FunTab:AddSection({ "ESP" })
+_G.ESPData = {
+    espEnabled = false,
+    espType = "Nome + Idade",
+    selectedColor = "RGB",
+    billboardGuis = {},
+    highlights = {},
+    lines = {},
+    connections = {}
+}
+local CurrentCamera = Workspace.CurrentCamera
+
+local function GetESPColor()
+    if _G.ESPData.selectedColor == "RGB" then
+        return Color3.fromHSV(tick() % 5 / 5, 1, 1)
+    end
+    local colors = {
+        Branco = Color3.fromRGB(255, 255, 255),
+        Preto = Color3.fromRGB(0, 0, 0),
+        Vermelho = Color3.fromRGB(255, 0, 0),
+        Verde = Color3.fromRGB(0, 255, 0),
+        Azul = Color3.fromRGB(0, 170, 255),
+        Amarelo = Color3.fromRGB(255, 255, 0),
+        Rosa = Color3.fromRGB(255, 105, 180),
+        Roxo = Color3.fromRGB(128, 0, 128)
+    }
+    return colors[_G.ESPData.selectedColor] or Color3.new(1, 1, 1)
+end
+
+_G.clearAllESP = function()
+    for _, gui in pairs(_G.ESPData.billboardGuis) do
+        pcall(function() gui:Destroy() end)
+    end
+    for _, highlight in pairs(_G.ESPData.highlights) do
+        pcall(function() highlight:Destroy() end)
+    end
+    for _, line in pairs(_G.ESPData.lines) do
+        pcall(function() line:Remove() end)
+    end
+    for _, conn in pairs(_G.ESPData.connections) do
+        pcall(function() conn:Disconnect() end)
+    end
+    _G.ESPData.billboardGuis = {}
+    _G.ESPData.highlights = {}
+    _G.ESPData.lines = {}
+    _G.ESPData.connections = {}
+end
+
+local function CreateBillboardESP(player)
+    if player == LocalPlayer then return end
+    if not player.Character then return end
+    if not player.Character:FindFirstChild("Head") then return end
+    local gui = Instance.new("BillboardGui")
+    gui.Size = UDim2.new(0, 200, 0, 50)
+    gui.StudsOffset = Vector3.new(0, 3, 0)
+    gui.AlwaysOnTop = true
+    gui.Parent = player.Character.Head
+    local label = Instance.new("TextLabel")
+    label.Size = UDim2.new(1, 0, 1, 0)
+    label.BackgroundTransparency = 1
+    label.TextStrokeTransparency = 0.5
+    label.Font = Enum.Font.SourceSansBold
+    label.TextSize = 14
+    label.Text = player.Name .. " | " .. player.AccountAge .. " dias"
+    label.TextColor3 = GetESPColor()
+    label.Parent = gui
+    _G.ESPData.billboardGuis[player] = gui
+end
+
+local function CreateHighlightESP(player)
+    if player == LocalPlayer then return end
+    if not player.Character then return end
+    local highlight = Instance.new("Highlight")
+    highlight.FillColor = GetESPColor()
+    highlight.FillTransparency = 0.5
+    highlight.OutlineTransparency = 0
+    highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+    highlight.Parent = player.Character
+    _G.ESPData.highlights[player] = highlight
+end
+
+local function CreateLineESP(player)
+    if player == LocalPlayer then return end
+    local line = Drawing.new("Line")
+    line.Thickness = 2
+    line.Transparency = 1
+    line.Visible = false
+    _G.ESPData.lines[player] = line
+end
+
+_G.applyCurrentESP = function()
+    _G.clearAllESP()
+    if not _G.ESPData.espEnabled then return end
+    for _, player in pairs(Players:GetPlayers()) do
+        if _G.ESPData.espType == "Nome + Idade" then
+            CreateBillboardESP(player)
+        elseif _G.ESPData.espType == "Corpo (Highlight)" then
+            CreateHighlightESP(player)
+        elseif _G.ESPData.espType == "Linhas" then
+            CreateLineESP(player)
+        end
+    end
+    table.insert(_G.ESPData.connections, RunService.RenderStepped:Connect(function()
+        if not _G.ESPData.espEnabled then return end
+        GetESPColor()
+        if _G.ESPData.espType == "Linhas" then
+            for player, line in pairs(_G.ESPData.lines) do
+                local char = player.Character
+                if char and char:FindFirstChild("HumanoidRootPart") then
+                    local pos, onScreen = CurrentCamera:WorldToViewportPoint(char.HumanoidRootPart.Position)
+                    if onScreen then
+                        line.Visible = true
+                        line.From = Vector2.new(CurrentCamera.ViewportSize.X / 2, CurrentCamera.ViewportSize.Y)
+                        line.To = Vector2.new(pos.X, pos.Y)
+                        line.Color = GetESPColor()
+                    else
+                        line.Visible = false
+                    end
+                else
+                    line.Visible = false
+                end
+            end
+        end
+    end))
+end
+
+FunTab:AddDropdown({
+    Name = "Tipo de ESP",
+    Options = { "Nome + Idade", "Corpo (Highlight)", "Linhas" },
+    Default = 1,
+    Callback = function(value)
+        _G.ESPData.espType = value
+        if _G.ESPData.espEnabled then
+            _G.applyCurrentESP()
+        end
+    end
+})
+FunTab:AddDropdown({
+    Name = "Cor do ESP",
+    Options = { "RGB", "Branco", "Preto", "Vermelho", "Verde", "Azul", "Amarelo", "Rosa", "Roxo" },
+    Default = 1,
+    Callback = function(value)
+        _G.ESPData.selectedColor = value
+    end
+})
+FunTab:AddToggle({
+    Name = "ESP Ativado",
+    Default = false,
+    Callback = function(value)
+        _G.ESPData.espEnabled = value
+        if value then
+            _G.applyCurrentESP()
+        else
+            _G.clearAllESP()
+        end
+    end
+})
+
+AvatarTab:AddSection({ "Copy avatar" })
+local SelectedPlayer = nil
+local PlayerDropdown = AvatarTab:AddDropdown({
+    Name = "Escolher Player",
+    Options = GetPlayerList(),
+    Callback = function(value)
+        SelectedPlayer = value
+    end
+})
+local function UpdatePlayerList()
+    local list = {}
+    for _, player in pairs(Players:GetPlayers()) do
+        if player ~= LocalPlayer then
+            table.insert(list, player.Name)
+        end
+    end
+    PlayerDropdown:Set(list)
+end
+AvatarTab:AddButton({
+    Name = "Atualizar Lista",
+    Callback = UpdatePlayerList
+})
+AvatarTab:AddButton({
+    Name = "Copiar Avatar",
+    Callback = function()
+        if not SelectedPlayer then return end
+        local targetPlayer = Players:FindFirstChild(SelectedPlayer)
+        if not targetPlayer or not targetPlayer.Character then return end
+        local targetHumanoid = targetPlayer.Character:FindFirstChildOfClass("Humanoid")
+        if not targetHumanoid then return end
+        local localHumanoid = LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+        if not localHumanoid then return end
+        local desc = targetHumanoid:GetAppliedDescription()
+        local bodyParts = { desc.Torso, desc.RightArm, desc.LeftArm, desc.RightLeg, desc.LeftLeg, desc.Head }
+        RemoteEvents.ChangeCharacterBody:InvokeServer(bodyParts)
+        task.wait(0.5)
+        if tonumber(desc.Shirt) then
+            RemoteEvents.Wear:InvokeServer(tonumber(desc.Shirt))
+            task.wait(0.3)
+        end
+        if tonumber(desc.Pants) then
+            RemoteEvents.Wear:InvokeServer(tonumber(desc.Pants))
+            task.wait(0.3)
+        end
+        if tonumber(desc.Face) then
+            RemoteEvents.Wear:InvokeServer(tonumber(desc.Face))
+            task.wait(0.3)
+        end
+        for _, acc in pairs(desc:GetAccessories(true)) do
+            if acc.AssetId then
+                RemoteEvents.Wear:InvokeServer(tonumber(acc.AssetId))
+                task.wait(0.3)
+            end
+        end
+        local bodyColors = targetPlayer.Character:FindFirstChild("Body Colors")
+        if bodyColors then
+            RemoteEvents.ChangeBodyColor:FireServer(tostring(bodyColors.HeadColor))
+        end
+    end
+})
+
+AvatarTab:AddSection({ "Ver IDs da skin do player" })
+local SkinItems = {}
+local AnimationIDs = {}
+local SkinDropdown = AvatarTab:AddDropdown({
+    Name = "Skin Items",
+    Options = {},
+    Callback = function(value)
+        if value == "Animations (Equip All)" then
+            for _, id in pairs(AnimationIDs) do
+                RemoteEvents.Wear:InvokeServer(id)
+            end
+            return
+        end
+        local id = tonumber(value:match("%d+"))
+        if id then
+            RemoteEvents.Wear:InvokeServer(id)
+        end
+    end
+})
+AvatarTab:AddButton({
+    Name = "View Player Skin",
+    Callback = function()
+        if not SelectedPlayer then return end
+        local targetPlayer = Players:FindFirstChild(SelectedPlayer)
+        if not targetPlayer or not targetPlayer.Character then return end
+        local humanoid = targetPlayer.Character:FindFirstChildOfClass("Humanoid")
+        if not humanoid then return end
+        local desc = humanoid:GetAppliedDescription()
+        SkinItems = {}
+        AnimationIDs = {}
+        if tonumber(desc.Head) then table.insert(SkinItems, "Head: " .. desc.Head) end
+        if tonumber(desc.Torso) then table.insert(SkinItems, "Torso: " .. desc.Torso) end
+        if tonumber(desc.LeftArm) then table.insert(SkinItems, "Left Arm: " .. desc.LeftArm) end
+        if tonumber(desc.RightArm) then table.insert(SkinItems, "Right Arm: " .. desc.RightArm) end
+        if tonumber(desc.LeftLeg) then table.insert(SkinItems, "Left Leg: " .. desc.LeftLeg) end
+        if tonumber(desc.RightLeg) then table.insert(SkinItems, "Right Leg: " .. desc.RightLeg) end
+        if tonumber(desc.Shirt) then table.insert(SkinItems, "Shirt: " .. desc.Shirt) end
+        if tonumber(desc.Pants) then table.insert(SkinItems, "Pants: " .. desc.Pants) end
+        if tonumber(desc.Face) then table.insert(SkinItems, "Face: " .. desc.Face) end
+        local animations = { desc.IdleAnimation, desc.WalkAnimation, desc.RunAnimation, desc.JumpAnimation, desc.FallAnimation, desc.ClimbAnimation, desc.SwimAnimation }
+        for _, anim in pairs(animations) do
+            if tonumber(anim) then
+                table.insert(AnimationIDs, anim)
+            end
+        end
+        if #AnimationIDs > 0 then
+            table.insert(SkinItems, "Animations (Equip All)")
+        end
+        for _, acc in pairs(desc:GetAccessories(true)) do
+            if acc.AssetId then
+                table.insert(SkinItems, "Accessory: " .. acc.AssetId)
+            end
+        end
+        SkinDropdown:Set(SkinItems)
+    end
+})
+
+AvatarTab:AddSection({ "Trocar Pernas" })
+local function ApplyLegs(rightLeg, leftLeg)
+    local humanoid = LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+    if not humanoid then return end
+    local desc = humanoid:GetAppliedDescription()
+    RemoteEvents.ChangeCharacterBody:InvokeServer({ desc.Torso, desc.RightArm, desc.LeftArm, rightLeg or desc.RightLeg, leftLeg or desc.LeftLeg, desc.Head })
+end
+local LegsOptions = {
+    { name = "Zumbi", id = 37754710, type = "Right" },
+    { name = "Gelo", id = 139572789, type = "Left" },
+    { name = "Pau", id = 14498289771, type = "Right" },
+    { name = "Osso Preto", id = 14547141130, type = "Right" },
+    { name = "Osso", id = 14681538960, type = "Right" },
+    { name = "RGB", id = 14533417546, type = "Right" },
+    { name = "Invisível", id = 14532583517, type = "Right" }
+}
+local LegNames = {}
+for _, leg in pairs(LegsOptions) do
+    table.insert(LegNames, leg.name)
+end
+local LegDropdown = AvatarTab:AddDropdown({
+    Name = "Escolher Perna",
+    Options = LegNames,
+    Callback = function(value)
+        for _, leg in pairs(LegsOptions) do
+            if leg.name == value then
+                if leg.type == "Right" then
+                    ApplyLegs(leg.id, nil)
+                elseif leg.type == "Left" then
+                    ApplyLegs(nil, leg.id)
+                end
+                break
+            end
+        end
+    end
+})
+
+AvatarTab:AddSection({ "Effects Avatar" })
+local ApplyEmitterRemote = RE:WaitForChild("ApplyEmmiter")
+local function CreateEffectDropdown(name, effects)
+    local effectNames = {}
+    for _, effect in pairs(effects) do
+        table.insert(effectNames, effect.name)
+    end
+    AvatarTab:AddDropdown({
+        Name = name,
+        Options = effectNames,
+        Callback = function(value)
+            for _, effect in pairs(effects) do
+                if effect.name == value then
+                    ApplyEmitterRemote:InvokeServer(effect.id, effect.code)
+                    break
+                end
+            end
+        end
+    })
+end
+CreateEffectDropdown("Fogo", {
+    { name = "Branco", id = "18637074370", code = "030FireWhite" },
+    { name = "Laranja", id = "18637025451", code = "031FireOrange" },
+    { name = "Verde", id = "18637078598", code = "032FireGreen" },
+    { name = "Azul", id = "18637076370", code = "033FireBlue" },
+    { name = "Roxo", id = "18637070174", code = "034FirePurple" },
+    { name = "Preto", id = "18637072603", code = "035FireBlack" }
+})
+CreateEffectDropdown("Corações", {
+    { name = "Amarelo", id = "18635672195", code = "001HeartsYellow" },
+    { name = "Verde", id = "18635727693", code = "002HeartsGreen" },
+    { name = "Azul", id = "18635732186", code = "003HeartsBlue" },
+    { name = "Roxo", id = "18635723426", code = "004HeartsPurple" },
+    { name = "Rosa", id = "18635726250", code = "005HeartsPink" },
+    { name = "Vermelho", id = "18635729673", code = "006HeartsRed" }
+})
+CreateEffectDropdown("Estrela", {
+    { name = "Branca", id = "18637942956", code = "090StarWhite" },
+    { name = "Laranja", id = "18637946172", code = "091StarOrange" },
+    { name = "Verde", id = "18637934500", code = "092StarGreen" },
+    { name = "Azul", id = "18637940338", code = "093StarBlue" },
+    { name = "Roxa", id = "18637944796", code = "094StarPurple" },
+    { name = "Rosa", id = "18637947820", code = "095StarPink" },
+    { name = "Vermelha", id = "18637949457", code = "096StarRed" }
+})
+CreateEffectDropdown("Fumaça", {
+    { name = "Branca", id = "18637791748", code = "080SmokeWhite" },
+    { name = "Amarela", id = "18637800482", code = "081SmokeYellow" },
+    { name = "Laranja", id = "18637793920", code = "082SmokeOrange" },
+    { name = "Verde", id = "18637789299", code = "083SmokeGreen" },
+    { name = "Azul", id = "18637803021", code = "084SmokeBlue" },
+    { name = "Roxa", id = "18637813360", code = "085SmokePurple" },
+    { name = "Vermelha", id = "18637796598", code = "086SmokeRed" },
+    { name = "Preta", id = "18637798529", code = "087SmokeBlack" }
+})
+
+AvatarTab:AddSection({ "Corpos" })
+local function CreateBodyDropdown(name, bodies)
+    local bodyNames = {}
+    for _, body in pairs(bodies) do
+        table.insert(bodyNames, body.name)
+    end
+    AvatarTab:AddDropdown({
+        Name = name,
+        Options = bodyNames,
+        Callback = function(value)
+            for _, body in pairs(bodies) do
+                if body.name == value then
+                    ApplyBody(body.ids)
+                    break
+                end
+            end
+        end
+    })
+end
+CreateBodyDropdown("Padrão", {
+    { name = "Pequeno", ids = { 376532000, 376531012, 376530220, 0, 0, 71993263971199 } },
+    { name = "Musculoso", ids = { 32336059, 4416788553, 4416785861, 2517207746, 2517204456, 0 } },
+    { name = "Auto", ids = { 84053421838284, 116266039925750, 115931454049085, 96815508293389, 121515016872140, 76568859580605 } },
+    { name = "1x1x1x", ids = { 87108996849145, 89124612345294, 84431523780379, 104281326156990, 94645302037763, 0 } },
+    { name = "Auto 2", ids = { 15365110905, 17754346380, 17754346403, 139607718, 81153927159685, 102360893332890 } },
+    { name = "Musculoso 2", ids = { 18178775358, 18178775182, 18178775725, 96815508293389, 121515016872140, 0 } },
+    { name = "Musculoso 3", ids = { 32336117, 16580491126, 32336182, 14752574049, 14752574419, 16580493236 } },
+    { name = "Mini REPO", ids = { 117101023704820, 125767940563838, 137301494386930, 87357384184710, 133391239417000, 111818794467824 } },
+    { name = "Mini Garanhão", ids = { 124355047456535, 120507500641960, 82273782655463, 113625313757230, 109182039511430, 0 } },
+    { name = "Stick", ids = { 14731384498, 14731377938, 14731377894, 14731377875, 14731377941, 14731382899 } },
+    { name = "Chunky-Bug", ids = { 15527827600, 15527827578, 15527831669, 15527836067, 15527827184, 15527827599 } },
+    { name = "Cursed-Spider", ids = { 134555168634910, 100269043793770, 125607053187320, 122504853343600, 95907982259204, 91289185840375 } },
+    { name = "Pessed Terror", ids = { 122800511983370, 132465361516280, 125155800236527, 83070163355072, 102906187256940, 78311422507297 } }
+})
+CreateBodyDropdown("Feminino", {
+    { name = "Bunda Caída", ids = { 75159926897589, 76683091425509, 14567282030, 14567281990, 14874108946, 0 } },
+    { name = "Pequena Cheinha", ids = { 17759625390, 17759625333, 17759625415, 17759626537, 130044271500910, 0 } },
+    { name = "Pequena Coxuda", ids = { 97119075795691, 72699005696177, 122027795919160, 80393546275035, 125637672664510, 0 } }
+})
+
+ItemsTab:AddSection({ "Equipar todos os itens juntos na mao" })
+local AutoEquipEnabled = false
+ItemsTab:AddToggle({
+    Name = "Equipar vários itens ao mesmo tempo",
+    Default = false,
+    Callback = function(value)
+        AutoEquipEnabled = value
+        if value then
+            task.spawn(function()
+                while AutoEquipEnabled do
+                    if LocalPlayer.Character then
+                        for _, tool in pairs(LocalPlayer.Backpack:GetChildren()) do
+                            if tool:IsA("Tool") then
+                                tool.Parent = LocalPlayer.Character
+                                task.wait(0.05)
+                            end
+                        end
+                    end
+                    task.wait(0.1)
+                end
+            end)
+        end
+    end
+})
+
+ItemsTab:AddSection({ "Itens VIP, Evento & Escondidos" })
+local PlayerTriggerEvent = RE:WaitForChild("1Playe1rTrigge1rEven1t")
+local function EquipItem(itemName)
+    if not itemName then return end
+    PlayerTriggerEvent:FireServer("AcceptedToolToServer", itemName, LocalPlayer)
+end
+local function CreateItemDropdown(name, items)
+    local itemNames = {}
+    for key, _ in pairs(items) do
+        table.insert(itemNames, key)
+    end
+    ItemsTab:AddDropdown({
+        Name = name,
+        Options = itemNames,
+        CurrentOption = "",
+        Callback = function(value)
+            local item = items[value]
+            if item then
+                EquipItem(item)
+            end
+        end
+    })
+end
+CreateItemDropdown("Itens Escondidos", {
+    ["Livro Velho"] = "AgencyBook",
+    ["Chave Velha"] = "BankGateKey",
+    ["Mangueira"] = "FireHose",
+    ["Sacola de Diamantes"] = "DuffleBagDiamonds",
+    ["Chave de Ouro"] = "OldKey",
+    ["Sofa"] = "Couch",
+    ["Espada de Ouro"] = "SwordGold"
+})
+CreateItemDropdown("Itens VIP", {
+    ["Money Gun"] = "MoneyGun",
+    ["Snowboard"] = "Snowboard",
+    ["Skis"] = "Skis"
+})
+CreateItemDropdown("Itens de Evento", {
+    ["Lança ovo"] = "EggLauncher",
+    ["Canhão"] = "Cannon",
+    ["Planador"] = "Glider",
+    ["Pedra Nuclear"] = "UraniumRod",
+    ["Balão de água"] = "Water Balloon",
+    ["Canhão de neve"] = "SnowballCannon",
+    ["Pegar candy"] = "CandyBasket",
+    ["Garrafa termica"] = "Thermos",
+    ["Motosserra"] = "Chainsaw",
+    ["Lança azul"] = "JoustBlue",
+    ["Regador"] = "WateringCan",
+    ["Macaco azul"] = "BlueMonkey",
+    ["Presente Natal"] = "Present",
+    ["Bandeija"] = "CookieWindowTray",
+    ["Crystal"] = "Crystal",
+    ["Crystals"] = "Crystals",
+    ["Planador de Neve"] = "SnowflakeGlider",
+    ["Lança vermelha"] = "JoustRed"
+})
+ItemsTab:AddParagraph("Informação", "Escolha um item nas listas acima.\n\nQuando você selecionar, o item será equipado automaticamente no seu personagem")
+
+HouseTab:AddSection({ "Função para usar em você" })
+HouseTab:AddButton({
+    Name = "Remover Ban de Todas as Casas",
+    Description = "Tenta remover o ban de todas as casas",
+    Callback = function()
+        local removed = 0
+        local failed = 0
+        for _, obj in pairs(Workspace:GetDescendants()) do
+            if obj.Name and obj.Name:match("BannedBlock") then
+                if pcall(function() obj:Destroy() end) then
+                    removed = removed + 1
+                else
+                    failed = failed + 1
+                end
+            end
+        end
+        if removed > 0 then
+            StarterGui:SetCore("SendNotification", { Title = "Sucesso", Text = "Bans removidos de " .. removed .. " casas!", Duration = 5 })
+        end
+        if failed > 0 then
+            StarterGui:SetCore("SendNotification", { Title = "Aviso", Text = "Falha ao remover bans de " .. failed .. " casas.", Duration = 5 })
+        end
+        if removed == 0 and failed == 0 then
+            StarterGui:SetCore("SendNotification", { Title = "Aviso", Text = "Nenhum ban encontrado para remover.", Duration = 5 })
+        end
+    end
+})
+
+HouseTab:AddSection({ "RGB Casa" })
+local RGBSpeed = 3
+local RGBHouseEnabled = false
+HouseTab:AddSlider({
+    Name = "Velocidade RGB",
+    Min = 1,
+    Max = 26,
+    Default = 3,
+    Callback = function(value)
+        RGBSpeed = value
+    end
+})
+HouseTab:AddToggle({
+    Name = "RGB Casa",
+    Default = false,
+    Callback = function(value)
+        RGBHouseEnabled = value
+        if value then
+            task.spawn(function()
+                while RGBHouseEnabled do
+                    FireRemote("1Player1sHous1e", { "ColorPickHouse", RGBColor(RGBSpeed) })
+                    task.wait(0.1)
+                end
+            end)
+        end
+    end
+})
+
+HouseTab:AddSection({ "Loops na sua casa" })
+local HouseRE = RE:WaitForChild("1Player1sHous1e")
+local LoopGarageEnabled = false
+local LoopCurtainsEnabled = false
+local LoopBabyEnabled = false
+local LoopLockDoorsEnabled = false
+HouseTab:AddToggle({
+    Name = "Abrir e Fechar Garagem Loop",
+    Default = false,
+    Callback = function(value)
+        LoopGarageEnabled = value
+        task.spawn(function()
+            while LoopGarageEnabled do
+                HouseRE:FireServer("GarageDoor")
+                task.wait(0.6)
+            end
+        end)
+    end
+})
+HouseTab:AddToggle({
+    Name = "Abrir e Fechar Cortinas Loop",
+    Default = false,
+    Callback = function(value)
+        LoopCurtainsEnabled = value
+        task.spawn(function()
+            while LoopCurtainsEnabled do
+                HouseRE:FireServer("Curtains")
+                task.wait(0.6)
+            end
+        end)
+    end
+})
+HouseTab:AddToggle({
+    Name = "Baby Option Loop",
+    Default = false,
+    Callback = function(value)
+        LoopBabyEnabled = value
+        task.spawn(function()
+            while LoopBabyEnabled do
+                HouseRE:FireServer("BabyOptionYes")
+                task.wait(0.3)
+            end
+        end)
+    end
+})
+HouseTab:AddToggle({
+    Name = "Trancar Portas Loop",
+    Default = false,
+    Callback = function(value)
+        LoopLockDoorsEnabled = value
+        task.spawn(function()
+            while LoopLockDoorsEnabled do
+                HouseRE:FireServer("LockDoors")
+                task.wait(0.6)
+            end
+        end)
+    end
+})
+
+HouseTab:AddSection({ "Teleporte Para Casas" })
+local HousePositions = {
+    ["Casa 1"] = Vector3.new(260.29, 4.37, 209.32),
+    ["Casa 2"] = Vector3.new(234.49, 4.37, 228),
+    ["Casa 3"] = Vector3.new(262.79, 21.37, 210.84),
+    ["Casa 4"] = Vector3.new(229.6, 21.37, 225.4),
+    ["Casa 5"] = Vector3.new(173.44, 21.37, 228.11),
+    ["Casa 6"] = Vector3.new(-43, 21, -137),
+    ["Casa 7"] = Vector3.new(-40, 36, -137),
+    ["Casa 11"] = Vector3.new(-21, 40, 436),
+    ["Casa 12"] = Vector3.new(155, 37, 433),
+    ["Casa 13"] = Vector3.new(255, 35, 431),
+    ["Casa 14"] = Vector3.new(254, 38, 394),
+    ["Casa 15"] = Vector3.new(148, 39, 387),
+    ["Casa 16"] = Vector3.new(-17, 42, 395),
+    ["Casa 17"] = Vector3.new(-189, 37, -247),
+    ["Casa 18"] = Vector3.new(-354, 37, -244),
+    ["Casa 19"] = Vector3.new(-456, 36, -295),
+    ["Casa 20"] = Vector3.new(-453, 38, -356),
+    ["Casa 21"] = Vector3.new(-447, 38, -410),
+    ["Casa 22"] = Vector3.new(-496, 69, -348),
+    ["Casa 23"] = Vector3.new(-103, 12, 1087),
+    ["Casa 24"] = Vector3.new(-730, 6, 808),
+    ["Casa 25"] = Vector3.new(-245, 7, 822),
+    ["Casa 26"] = Vector3.new(639, 76, -361),
+    ["Casa 27"] = Vector3.new(-908, 6, -361),
+    ["Casa 28"] = Vector3.new(-111, 70, -417),
+    ["Casa 29"] = Vector3.new(230, 38, 569),
+    ["Casa 30"] = Vector3.new(-30, 13, 2209)
+}
+local HouseNames = {}
+for name, _ in pairs(HousePositions) do
+    table.insert(HouseNames, name)
+end
+table.sort(HouseNames, function(a, b)
+    return (tonumber(a:match("%d+")) or 0) < (tonumber(b:match("%d+")) or 0)
+end)
+HouseTab:AddDropdown({
+    Name = "Selecionar Casa",
+    Options = HouseNames,
+    Callback = function(value)
+        local player = LocalPlayer
+        if player and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+            player.Character.HumanoidRootPart.CFrame = CFrame.new(HousePositions[value])
+        end
+    end
+})
+HouseTab:AddLabel("Teleporte para a Casa que Quiser")
+
+CarTab:AddSection({ "Speed Car/Boat & Turbo" })
+local MaxSpeed = 200
+local TurboSpeed = 11.3
+local function ApplySpeedToVehicle(vehicle)
+    local seats = vehicle:FindFirstChild("Seats")
+    if seats then
+        local seat = seats:FindFirstChild("VehicleSeat")
+        if seat then
+            pcall(function() seat.MaxSpeed = MaxSpeed end)
+        end
+    end
+    local body = vehicle:FindFirstChild("Body")
+    if body then
+        local seat = body:FindFirstChild("VehicleSeat")
+        if seat then
+            pcall(function() seat.MaxSpeed = MaxSpeed end)
+        end
+    end
+end
+local function ApplyTurboToVehicle(vehicle)
+    local seats = vehicle:FindFirstChild("Seats")
+    if seats then
+        local seat = seats:FindFirstChild("VehicleSeat")
+        if seat then
+            pcall(function() seat.Turbo = TurboSpeed end)
+        end
+    end
+    local body = vehicle:FindFirstChild("Body")
+    if body then
+        local seat = body:FindFirstChild("VehicleSeat")
+        if seat then
+            pcall(function() seat.Turbo = TurboSpeed end)
+        end
+    end
+end
+CarTab:AddTextBox({
+    Name = "Speed",
+    PlaceholderText = "200",
+    Callback = function(value)
+        MaxSpeed = tonumber(value) or 200
+    end
+})
+CarTab:AddTextBox({
+    Name = "Turbo",
+    PlaceholderText = "11.3",
+    Callback = function(value)
+        TurboSpeed = tonumber(value) or 11.3
+    end
+})
+CarTab:AddButton({
+    Name = "Aplicar Speed",
+    Callback = function()
+        local Vehicles = Workspace:FindFirstChild("Vehicles")
+        if not Vehicles then return end
+        for _, vehicle in pairs(Vehicles:GetChildren()) do
+            ApplySpeedToVehicle(vehicle)
+        end
+        print("Speed aplicado nos veículos!")
+    end
+})
+CarTab:AddButton({
+    Name = "Aplicar Turbo",
+    Callback = function()
+        local Vehicles = Workspace:FindFirstChild("Vehicles")
+        if not Vehicles then return end
+        for _, vehicle in pairs(Vehicles:GetChildren()) do
+            if vehicle:FindFirstChild("Seats") then
+                ApplyTurboToVehicle(vehicle)
+            end
+        end
+        print("Turbo aplicado nos carros!")
+    end
+})
+
+CarTab:AddSection({ "Loops" })
+local CarRE = RE:WaitForChild("1Player1sCa1r")
+local Remotes = ReplicatedStorage:FindFirstChild("Remotes")
+local LoopHornEnabled = false
+local LoopHeadlightsEnabled = false
+local LoopHazardEnabled = false
+local LoopRepositionEnabled = false
+local LoopMusicEnabled = false
+CarTab:AddToggle({
+    Name = "Loop Buzina",
+    Default = false,
+    Callback = function(value)
+        LoopHornEnabled = value
+        task.spawn(function()
+            while LoopHornEnabled do
+                if Remotes then
+                    Remotes.PlayHorn:InvokeServer()
+                    Remotes.StopHorn:InvokeServer()
+                end
+                task.wait(0.5)
+            end
+        end)
+    end
+})
+CarTab:AddToggle({
+    Name = "Loop Farol",
+    Default = false,
+    Callback = function(value)
+        LoopHeadlightsEnabled = value
+        task.spawn(function()
+            while LoopHeadlightsEnabled do
+                if Remotes then
+                    Remotes.ToggleHeadLights:InvokeServer()
+                end
+                task.wait(0.5)
+            end
+        end)
+    end
+})
+CarTab:AddToggle({
+    Name = "Loop Lights",
+    Default = false,
+    Callback = function(value)
+        LoopHazardEnabled = value
+        task.spawn(function()
+            while LoopHazardEnabled do
+                if Remotes then
+                    Remotes.ToggleHazardLights:InvokeServer()
+                end
+                task.wait(0.5)
+            end
+        end)
+    end
+})
+CarTab:AddToggle({
+    Name = "Loop Descapotar",
+    Default = false,
+    Callback = function(value)
+        LoopRepositionEnabled = value
+        task.spawn(function()
+            while LoopRepositionEnabled do
+                if Remotes then
+                    Remotes.RepositionVehicle:InvokeServer()
+                end
+                task.wait(0.5)
+            end
+        end)
+    end
+})
+CarTab:AddToggle({
+    Name = "Loop Música Chata",
+    Default = false,
+    Callback = function(value)
+        LoopMusicEnabled = value
+        task.spawn(function()
+            while LoopMusicEnabled do
+                CarRE:FireServer("PickingVehicleMusicText", "138246178191037", true)
+                task.wait(0.5)
+            end
+        end)
+    end
+})
+
+CarTab:AddSection({ "Selecionar e Trazer Carro" })
+local SelectedCar = nil
+local function GetVehicleList()
+    local Vehicles = Workspace:FindFirstChild("Vehicles")
+    if not Vehicles then return {} end
+    local list = {}
+    for _, vehicle in pairs(Vehicles:GetChildren()) do
+        if vehicle.Name:match("Car$") then
+            table.insert(list, vehicle.Name)
+        end
+    end
+    return list
+end
+local CarDropdown = CarTab:AddDropdown({
+    Name = "Selecionar Carro",
+    Options = GetVehicleList(),
+    Callback = function(value)
+        SelectedCar = value
+    end
+})
+CarTab:AddButton({
+    Name = "Atualizar Lista de Carros",
+    Callback = function()
+        CarDropdown:Set(GetVehicleList())
+    end
+})
+local CarCameraEnabled = false
+local OldCameraSubject = nil
+local OldCameraType = nil
+CarTab:AddToggle({
+    Name = "Ver Camera do Carro",
+    Default = false,
+    Callback = function(value)
+        CarCameraEnabled = value
+        if value then
+            if not SelectedCar then return end
+            local Vehicles = Workspace:FindFirstChild("Vehicles")
+            if not Vehicles then return end
+            local vehicle = Vehicles:FindFirstChild(SelectedCar)
+            if not vehicle then return end
+            local seat = vehicle:FindFirstChildWhichIsA("VehicleSeat", true)
+            if not seat then return end
+            OldCameraSubject = CurrentCamera.CameraSubject
+            OldCameraType = CurrentCamera.CameraType
+            CurrentCamera.CameraSubject = seat
+            CurrentCamera.CameraType = Enum.CameraType.Follow
+        else
+            if OldCameraSubject then
+                CurrentCamera.CameraSubject = OldCameraSubject
+                CurrentCamera.CameraType = OldCameraType or Enum.CameraType.Custom
+            end
+        end
+    end
+})
+CarTab:AddButton({
+    Name = "Trazer o carro selecionado",
+    Callback = function()
+        if not SelectedCar then return end
+        local Vehicles = Workspace:FindFirstChild("Vehicles")
+        if not Vehicles then return end
+        local vehicle = Vehicles:FindFirstChild(SelectedCar)
+        if not vehicle then return end
+        local seat = vehicle:FindFirstChildWhichIsA("VehicleSeat", true)
+        if not seat or seat.Occupant then return end
+        local root = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+        if not root then return end
+        local pos = root.Position
+        local humanoid = LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+        if humanoid then
+            humanoid.Sit = false
+            task.wait(0.1)
+            root.CFrame = seat.CFrame + Vector3.new(0, 5, 0)
+            task.wait(0.1)
+            seat:Sit(humanoid)
+            task.wait(0.3)
+        end
+        if vehicle.PrimaryPart then
+            vehicle:SetPrimaryPartCFrame(CFrame.new(pos + Vector3.new(5, 0, 5)))
+        end
+        if humanoid then
+            humanoid.Sit = false
+            task.wait(0.1)
+            if pos then
+                LocalPlayer.Character:PivotTo(CFrame.new(pos))
+            end
+        end
+    end
+})
+CarTab:AddButton({
+    Name = "Trazer Todos os Carros",
+    Callback = function()
+        local root = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+        if not root then return end
+        local pos = root.Position
+        local Vehicles = Workspace:FindFirstChild("Vehicles")
+        if not Vehicles then return end
+        local humanoid = LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+        for _, vehicle in pairs(Vehicles:GetChildren()) do
+            if vehicle.Name:match("Car$") then
+                local seat = vehicle:FindFirstChildWhichIsA("VehicleSeat", true)
+                if seat and not seat.Occupant then
+                    if humanoid then
+                        humanoid.Sit = false
+                        task.wait(0.1)
+                        root.CFrame = seat.CFrame + Vector3.new(0, 5, 0)
+                        task.wait(0.1)
+                        seat:Sit(humanoid)
+                        task.wait(0.3)
+                    end
+                    if vehicle.PrimaryPart then
+                        vehicle:SetPrimaryPartCFrame(CFrame.new(pos + Vector3.new(5, 0, 5)))
+                    end
+                    if humanoid then
+                        humanoid.Sit = false
+                        task.wait(0.1)
+                        if pos then
+                            LocalPlayer.Character:PivotTo(CFrame.new(pos))
+                        end
+                    end
+                    task.wait(1)
+                end
+            end
+        end
+    end
+})
+
+TrollTab:AddSection({ "Escolher Player" })
+local TrollPlayer = nil
+local TrollDropdown = TrollTab:AddDropdown({
+    Name = "Escolher Player",
+    Options = GetPlayerList(),
+    Callback = function(value)
+        TrollPlayer = value
+    end
+})
+TrollTab:AddButton({
+    Name = "Atualizar Lista",
+    Callback = function()
+        TrollDropdown:Set(GetPlayerList())
+    end
+})
+
+TrollTab:AddSection({ "Spectate" })
+local SpectateEnabled = false
+local SpectateTarget = nil
+local SpectateConn = nil
+local SpectateCharConn = nil
+local function StopSpectate()
+    if SpectateConn then
+        SpectateConn:Disconnect()
+        SpectateConn = nil
+    end
+    if SpectateCharConn then
+        SpectateCharConn:Disconnect()
+        SpectateCharConn = nil
+    end
+    if LocalPlayer.Character then
+        CurrentCamera.CameraSubject = LocalPlayer.Character
+        CurrentCamera.CameraType = Enum.CameraType.Custom
+    end
+end
+local function StartSpectate(player)
+    if not SpectateEnabled or not player then return end
+    StopSpectate()
+    SpectateTarget = player
+    local function UpdateSpectate()
+        if not SpectateEnabled then return end
+        if not SpectateTarget or not SpectateTarget.Character then return end
+        local humanoid = SpectateTarget.Character:FindFirstChildOfClass("Humanoid")
+        if humanoid then
+            CurrentCamera.CameraSubject = humanoid
+            CurrentCamera.CameraType = Enum.CameraType.Custom
+        end
+    end
+    SpectateConn = RunService.RenderStepped:Connect(UpdateSpectate)
+    SpectateCharConn = SpectateTarget.CharacterAdded:Connect(function()
+        task.wait(0.1)
+        if SpectateEnabled and SpectateTarget then
+            StartSpectate(SpectateTarget)
+        end
+    end)
+    UpdateSpectate()
+end
+TrollTab:AddToggle({
+    Name = "Spectar Jogador",
+    Default = false,
+    Callback = function(value)
+        SpectateEnabled = value
+        if not value then
+            StopSpectate()
+            return
+        end
+        local target = Players:FindFirstChild(TrollPlayer)
+        if target then
+            StartSpectate(target)
+        else
+            StopSpectate()
+        end
+    end
+})
+task.spawn(function()
+    while true do
+        task.wait(0.15)
+        if not SpectateEnabled then
+        else
+            if TrollPlayer then
+                local target = Players:FindFirstChild(TrollPlayer)
+                if target then
+                    StartSpectate(target)
+                else
+                    StopSpectate()
+                end
+            end
+        end
+    end
+end)
+
+TrollTab:AddSection({ "Teleport" })
+TrollTab:AddButton({
+    Name = "Teleportar no Jogador",
+    Callback = function()
+        if not TrollPlayer then return end
+        local target = Players:FindFirstChild(TrollPlayer)
+        if not target or not target.Character then return end
+        local targetRoot = target.Character:FindFirstChild("HumanoidRootPart")
+        if not targetRoot then return end
+        local localRoot = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+        if not localRoot then return end
+        localRoot.CFrame = targetRoot.CFrame * CFrame.new(0, 0, -3)
+    end
+})
+
+TrollTab:AddSection({ "Métodos" })
+local KillMethod = "Sofa"
+TrollTab:AddDropdown({
+    Name = "Escolher Kill",
+    Options = { "Sofa", "Bus" },
+    Default = "Sofa",
+    Callback = function(value)
+        KillMethod = value
+    end
+})
+local KillActive = false
+local KillRunning = false
+local KillConnection = nil
+TrollTab:AddButton({
+    Name = "Kill",
+    Callback = function()
+        if not TrollPlayer then
+            warn("Nenhum jogador selecionado!")
+            return
+        end
+        if KillMethod == "Sofa" then
+            if KillActive then return end
+            KillActive = true
+            KillRunning = false
+            local localChar = LocalPlayer.Character
+            if not localChar then return end
+            local localHumanoid = localChar:FindFirstChildOfClass("Humanoid")
+            local localRoot = localChar:FindFirstChild("HumanoidRootPart")
+            if not localHumanoid or not localRoot then return end
+            local targetPlayer = Players:FindFirstChild(TrollPlayer)
+            if not targetPlayer or not targetPlayer.Character then
+                KillActive = false
+                return
+            end
+            local targetHumanoid = targetPlayer.Character:FindFirstChildOfClass("Humanoid")
+            local targetRoot = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
+            if not targetHumanoid or not targetRoot then
+                KillActive = false
+                return
+            end
+            local hasSofa = false
+            if localChar:FindFirstChild("Couch") then
+                hasSofa = true
+            end
+            for _, tool in pairs(LocalPlayer.Backpack:GetChildren()) do
+                if tool.Name == "Couch" then
+                    hasSofa = true
+                end
+            end
+            if not hasSofa then
+                local toolRemote = RE:FindFirstChild("1Too1l")
+                if toolRemote then
+                    toolRemote:InvokeServer("PickingTools", "Couch")
+                end
+                task.wait(0.3)
+            end
+            local couch = LocalPlayer.Backpack:FindFirstChild("Couch")
+            if couch then
+                localHumanoid:EquipTool(couch)
+            end
+            task.wait(0.2)
+            localRoot.CFrame = targetRoot.CFrame * CFrame.new(0, 0, -2)
+            if KillConnection then
+                KillConnection:Disconnect()
+            end
+            KillConnection = targetHumanoid.Seated:Connect(function(seated)
+                if seated then
+                    KillRunning = true
+                    KillActive = false
+                    KillConnection:Disconnect()
+                    localRoot.CFrame = CFrame.new(-54.24, -298.21, -184.12)
+                    task.wait(0.3)
+                    localHumanoid:UnequipTools()
+                    task.wait(0.7)
+                    localRoot.CFrame = CFrame.new(-27.59, 4.27, -16.84)
+                end
+            end)
+            task.spawn(function()
+                local dir = 1
+                while not KillActive and not KillRunning do
+                    if not targetRoot or not targetRoot.Parent then
+                        break
+                    end
+                    local pos = targetRoot.Position
+                    local offsets = {
+                        Vector3.new(3 * dir, 0, 0),
+                        Vector3.new(-3 * dir, 0, 0),
+                        Vector3.new(0, 0, 3 * dir),
+                        Vector3.new(0, 0, -3 * dir),
+                        Vector3.new(0, 3, 0),
+                        Vector3.new(0, -3, 0),
+                        Vector3.new(1.5, -3.2, 1.5),
+                        Vector3.new(-1.5, -3.2, -1.5)
+                    }
+                    for _, offset in pairs(offsets) do
+                        if KillActive or KillRunning then break end
+                        localRoot.CFrame = CFrame.new(pos + offset, pos)
+                        task.wait(0.035)
+                    end
+                    dir = -dir
+                end
+            end)
+            task.spawn(function()
+                while not KillActive and not KillRunning do
+                    if localChar then
+                        local animator = localChar:FindFirstChildOfClass("Animator")
+                        if animator then
+                            local cycleRemote = RE:FindFirstChild("CycleNextAnimation")
+                            if cycleRemote then
+                                cycleRemote:FireServer()
+                            end
+                        end
+                    end
+                    task.wait(0.01)
+                end
+            end)
+        elseif KillMethod == "Bus" then
+            warn("Kill Bus - Implementação complexa no script original")
+        end
+    end
+})
+TrollTab:AddButton({
+    Name = "Parar Kill",
+    Callback = function()
+        KillActive = false
+        if KillConnection then
+            KillConnection:Disconnect()
+            KillConnection = nil
+        end
+        warn("Kill interrompido.")
+    end
+})
+
+TrollTab:AddSection({ "Annoy Barco" })
+local AnnoyBarcoEnabled = false
+local AnnoyBarcoConn = nil
+local AnnoyBarcoOriginalHeight = Workspace.FallenPartsDestroyHeight
+local AnnoyBarcoTarget = nil
+local AnnoyBarcoBoat = nil
+TrollTab:AddToggle({
+    Name = "Annoy Barco-player",
+    Default = false,
+    Callback = function(value)
+        if value then
+            if AnnoyBarcoEnabled then return end
+            if not TrollPlayer then return end
+            AnnoyBarcoEnabled = true
+            Workspace.FallenPartsDestroyHeight = -math.huge
+            local localChar = LocalPlayer.Character
+            if not localChar then
+                AnnoyBarcoEnabled = false
+                return
+            end
+            local localHumanoid = localChar:FindFirstChildOfClass("Humanoid")
+            local localRoot = localChar:FindFirstChild("HumanoidRootPart")
+            if not localHumanoid or not localRoot then
+                AnnoyBarcoEnabled = false
+                return
+            end
+            local targetPlayer = Players:FindFirstChild(TrollPlayer)
+            if not targetPlayer or not targetPlayer.Character then
+                AnnoyBarcoEnabled = false
+                return
+            end
+            local targetRoot = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
+            if not targetRoot then
+                AnnoyBarcoEnabled = false
+                return
+            end
+            local Vehicles = Workspace:WaitForChild("Vehicles")
+            localRoot.CFrame = CFrame.new(1754, -2, 58)
+            task.wait(0.5)
+            local BoatRemote = RE:WaitForChild("1Ca1r")
+            BoatRemote:FireServer("PickingBoat", "PirateFree")
+            task.wait(1)
+            AnnoyBarcoBoat = Vehicles:FindFirstChild(LocalPlayer.Name .. "Car")
+            if not AnnoyBarcoBoat then
+                AnnoyBarcoEnabled = false
+                return
+            end
+            local body = AnnoyBarcoBoat:FindFirstChild("Body")
+            if not body then return end
+            local seat = body:FindFirstChild("VehicleSeat")
+            if not seat then
+                AnnoyBarcoEnabled = false
+                return
+            end
+            localRoot.CFrame = seat.CFrame * CFrame.new(0, 1, 0)
+            task.wait()
+            if localHumanoid.SeatPart == seat or not AnnoyBarcoEnabled then
+                if not AnnoyBarcoEnabled then return end
+                localHumanoid.Sit = true
+                task.wait(0.2)
+                AnnoyBarcoTarget = targetRoot
+                AnnoyBarcoConn = RunService.Heartbeat:Connect(function()
+                    if not AnnoyBarcoEnabled then
+                        if AnnoyBarcoConn then
+                            AnnoyBarcoConn:Disconnect()
+                        end
+                        return
+                    end
+                    if localHumanoid.SeatPart ~= seat then
+                        AnnoyBarcoEnabled = false
+                        if AnnoyBarcoConn then
+                            AnnoyBarcoConn:Disconnect()
+                        end
+                    end
+                end)
+                task.spawn(function()
+                    while AnnoyBarcoEnabled do
+                        if not AnnoyBarcoTarget or not AnnoyBarcoTarget.Parent then
+                            break
+                        end
+                        local pos = AnnoyBarcoTarget.Position
+                        local offsets = {
+                            Vector3.new(1.5, 0, 0),
+                            Vector3.new(-1.5, 0, 0),
+                            Vector3.new(0, 0, 1.5),
+                            Vector3.new(0, 0, -1.5),
+                            Vector3.new(0, 2, 0),
+                            Vector3.new(0, -2, 0),
+                            Vector3.new(2, 1, 2),
+                            Vector3.new(-2, 1, -2),
+                            Vector3.new(2, -2, 2),
+                            Vector3.new(-2, -2, -2),
+                            Vector3.new(0, 3, 1),
+                            Vector3.new(0, -3, -1),
+                            Vector3.new(1, 2, -2),
+                            Vector3.new(-1, -2, 2),
+                            Vector3.new(3, 0, 1),
+                            Vector3.new(-3, 0, -1),
+                            Vector3.new(1.2, -3.2, 1.2),
+                            Vector3.new(-1.2, -3.2, -1.2)
+                        }
+                        for _, offset in pairs(offsets) do
+                            if not AnnoyBarcoEnabled then break end
+                            localRoot.CFrame = CFrame.new(pos + offset, pos) * CFrame.Angles(0, math.rad(60), 0)
+                            task.wait(0.005)
+                        end
+                        task.wait(0.5)
+                    end
+                end)
+                return
+            end
+        else
+            AnnoyBarcoEnabled = false
+            Workspace.FallenPartsDestroyHeight = AnnoyBarcoOriginalHeight
+            if AnnoyBarcoConn then
+                AnnoyBarcoConn:Disconnect()
+            end
+        end
+    end
+})
+
+TrollTab:AddSection({ "Fling" })
+local FlingEnabled = false
+local FlingTarget = nil
+local FlingConnection = nil
+TrollTab:AddToggle({
+    Name = "Fling Player",
+    Default = false,
+    Callback = function(value)
+        FlingEnabled = value
+        if value then
+            if not TrollPlayer then
+                FlingEnabled = false
+                return
+            end
+            local target = Players:FindFirstChild(TrollPlayer)
+            if not target or not target.Character then
+                FlingEnabled = false
+                return
+            end
+            FlingTarget = target
+            local targetRoot = target.Character:FindFirstChild("HumanoidRootPart")
+            if not targetRoot then
+                FlingEnabled = false
+                return
+            end
+            local localRoot = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+            if not localRoot then
+                FlingEnabled = false
+                return
+            end
+            FlingConnection = RunService.Heartbeat:Connect(function()
+                if not FlingEnabled or not FlingTarget or not FlingTarget.Character then
+                    return
+                end
+                local targetRoot = FlingTarget.Character:FindFirstChild("HumanoidRootPart")
+                if not targetRoot then return end
+                localRoot.CFrame = targetRoot.CFrame * CFrame.new(0, 0, -3)
+                localRoot.Velocity = Vector3.new(10000, 10000, 10000)
+            end)
+        else
+            if FlingConnection then
+                FlingConnection:Disconnect()
+                FlingConnection = nil
+            end
+            if LocalPlayer.Character then
+                local root = LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+                if root then
+                    root.Velocity = Vector3.zero
+                end
+            end
+        end
+    end
+})
+
+TrollTab:AddSection({ "Bomb Spam" })
+local BombSpamEnabled = false
+local BombSpamConnection = nil
+local BombMaxCount = 15
+local BombDelay = 0.1
+TrollTab:AddTextBox({
+    Name = "Max Bomb Count",
+    PlaceholderText = "15",
+    Callback = function(value)
+        BombMaxCount = tonumber(value) or 15
+    end
+})
+TrollTab:AddTextBox({
+    Name = "Bomb Delay",
+    PlaceholderText = "0.1",
+    Callback = function(value)
+        BombDelay = tonumber(value) or 0.1
+    end
+})
+local function CountBombs()
+    local count = 0
+    if LocalPlayer.Character then
+        for _, child in pairs(LocalPlayer.Character:GetChildren()) do
+            if child.Name == "Bomb" then
+                count = count + 1
+            end
+        end
+    end
+    for _, child in pairs(LocalPlayer.Backpack:GetChildren()) do
+        if child.Name == "Bomb" then
+            count = count + 1
+        end
+    end
+    return count
+end
+TrollTab:AddToggle({
+    Name = "Bomb Spam",
+    Default = false,
+    Callback = function(value)
+        BombSpamEnabled = value
+        if value then
+            task.spawn(function()
+                while BombSpamEnabled do
+                    local bombRemote = RE:FindFirstChild("1Blo1wBomb1sServe1r")
+                    if bombRemote then
+                        local count = CountBombs()
+                        if count < BombMaxCount then
+                            local toolRemote = RE:FindFirstChild("1Too1l")
+                            if toolRemote then
+                                toolRemote:InvokeServer("PickingTools", "Bomb")
+                            end
+                            local bomb = LocalPlayer.Backpack:FindFirstChild("Bomb")
+                            if bomb and LocalPlayer.Character then
+                                bomb.Parent = LocalPlayer.Character
+                                task.spawn(function()
+                                    pcall(function() bomb:Activate() end)
+                                end)
+                            end
+                        end
+                        bombRemote:FireServer("Bomb" .. LocalPlayer.Name)
+                    end
+                    task.wait(BombDelay)
+                end
+            end)
+        end
+    end
+})
+
+TrollTab:AddSection({ "Blackhole" })
+local BlackholeEnabled = false
+local BlackholePart = nil
+local BlackholeAttachment = nil
+local BlackholeParts = {}
+local BlackholeConn = nil
+TrollTab:AddToggle({
+    Name = "Blackhole (puxa portas)",
+    Default = false,
+    Callback = function(value)
+        BlackholeEnabled = value
+        if value then
+            local localChar = LocalPlayer.Character
+            if not localChar then return end
+            local root = localChar:FindFirstChild("HumanoidRootPart")
+            if not root then return end
+            BlackholePart = Instance.new("Part")
+            BlackholePart.Size = Vector3.new(100000, 100000, 100000)
+            BlackholePart.Transparency = 1
+            BlackholePart.Anchored = true
+            BlackholePart.CanCollide = false
+            BlackholePart.Name = "BlackHoleTarget"
+            BlackholePart.Parent = Workspace
+            BlackholeAttachment = Instance.new("Attachment")
+            BlackholeAttachment.Name = "BlackHoleAttachment"
+            BlackholeAttachment.Parent = BlackholePart
+            RunService.Heartbeat:Connect(function()
+                if BlackholePart and root then
+                    BlackholePart.CFrame = root.CFrame
+                end
+            end)
+            local function IsDoor(name)
+                local lower = string.lower(name)
+                return lower:find("door") or lower:find("doors") or lower:find("porta")
+            end
+            local function GrabDoor(part)
+                if not part:IsA("BasePart") or part.Anchored then return end
+                if not IsDoor(part.Name) then return end
+                if part:FindFirstChild("DoorAttached") then return end
+                part.CanCollide = false
+                local attached = Instance.new("BoolValue")
+                attached.Name = "DoorAttached"
+                attached.Parent = part
+                local att = Instance.new("Attachment")
+                att.Parent = part
+                local align = Instance.new("AlignPosition")
+                align.Parent = part
+                align.Attachment0 = att
+                align.Attachment1 = BlackholeAttachment
+                align.MaxForce = 1e20
+                align.MaxVelocity = math.huge
+                align.Responsiveness = 99999
+                local torque = Instance.new("Torque")
+                torque.Parent = part
+                torque.Attachment0 = att
+                torque.RelativeTo = Enum.ActuatorRelativeTo.World
+                torque.Torque = Vector3.new(math.random(-1000000, 1000000) * 90000, math.random(-1000000, 1000000) * 90000, math.random(-1000000, 1000000) * 90000)
+                table.insert(BlackholeParts, { Part = part, Align = align })
+            end
+            for _, part in pairs(Workspace:GetDescendants()) do
+                if part:IsA("BasePart") and IsDoor(part.Name) then
+                    GrabDoor(part)
+                end
+            end
+            Workspace.DescendantAdded:Connect(function(part)
+                if part:IsA("BasePart") and IsDoor(part.Name) then
+                    GrabDoor(part)
+                end
+            end)
+            local tool = Instance.new("Tool")
+            tool.Name = "Fling Porta"
+            tool.RequiresHandle = false
+            tool.Parent = LocalPlayer.Backpack
+            tool.Activated:Connect(function()
+                local mouse = LocalPlayer:GetMouse()
+                local target = mouse.Target
+                if not target then return end
+                local player = Players:GetPlayerFromCharacter(target:FindFirstAncestorOfClass("Model"))
+                if not player or player == LocalPlayer then return end
+                local char = player.Character
+                if not char then return end
+                local rootPart = char:FindFirstChild("HumanoidRootPart")
+                if not rootPart then return end
+                local doorTarget = rootPart:FindFirstChild("DoorTarget")
+                if not doorTarget then
+                    doorTarget = Instance.new("Attachment")
+                    doorTarget.Name = "DoorTarget"
+                    doorTarget.Parent = rootPart
+                end
+                for _, data in pairs(BlackholeParts) do
+                    if data.Align then
+                        data.Align.Attachment1 = doorTarget
+                    end
+                end
+                task.wait(5)
+                for _, data in pairs(BlackholeParts) do
+                    if data.Align then
+                        data.Align.Attachment1 = BlackholeAttachment
+                    end
+                end
+            end)
+        else
+            BlackholeEnabled = false
+            if BlackholePart then
+                BlackholePart:Destroy()
+                BlackholePart = nil
+            end
+            for _, data in pairs(BlackholeParts) do
+                if data.Part and data.Part.Parent then
+                    data.Part:Destroy()
+                end
+                if data.Align then
+                    data.Align:Destroy()
+                end
+            end
+            BlackholeParts = {}
+        end
+    end
+})
+
+TrollTab:AddSection({ "Sign Spam" })
+local SignSpamEnabled = false
+local SignSpamText = ""
+local SignSpamPlayer = nil
+local function SpamSign(text, target)
+    if target then
+        local player = Players:FindFirstChild(target)
+        if player and player.Character then
+            local sign = player.Character:FindFirstChild("Sign")
+            if sign then
+                local sound = sign:FindFirstChild("ToolSound")
+                if sound then
+                    sound:FireServer("Sign", "SignWords", text)
+                end
+            end
+        end
+    else
+        for _, player in pairs(Players:GetPlayers()) do
+            if player ~= LocalPlayer and player.Character then
+                local sign = player.Character:FindFirstChild("Sign")
+                if sign then
+                    local sound = sign:FindFirstChild("ToolSound")
+                    if sound then
+                        sound:FireServer("Sign", "SignWords", text)
+                    end
+                end
+            end
+        end
+    end
+end
+TrollTab:AddTextBox({
+    Name = "Mensagem Sign",
+    PlaceholderText = "Digite a mensagem...",
+    Callback = function(value)
+        SignSpamText = value
+    end
+})
+TrollTab:AddToggle({
+    Name = "Sign Spam (Todos)",
+    Default = false,
+    Callback = function(value)
+        SignSpamEnabled = value
+        if value then
+            task.spawn(function()
+                while SignSpamEnabled do
+                    SpamSign(SignSpamText, nil)
+                    task.wait(0.01)
+                end
+            end)
+        end
+    end
+})
+TrollTab:AddButton({
+    Name = "Enviar Sign para Player",
+    Callback = function()
+        if not TrollPlayer then
+            warn("Selecione um jogador!")
+            return
+        end
+        SpamSign(SignSpamText, TrollPlayer)
+    end
+})
+
+PropsTab:AddSection({ "Escolher Player" })
+local PropPlayer = nil
+local PropDropdown = PropsTab:AddDropdown({
+    Name = "Escolher Player",
+    Options = GetPlayerList(),
+    Callback = function(value)
+        PropPlayer = value
+    end
+})
+PropsTab:AddButton({
+    Name = "Atualizar Lista",
+    Callback = function()
+        PropDropdown:Set(GetPlayerList())
+    end
+})
+
+PropsTab:AddSection({ "Props RGB" })
+local RGBPropsEnabled = false
+local RGBPropsList = {}
+local RGBPropsConn = nil
+local function IsPlayerProp(prop)
+    return prop:IsA("Model") and string.find(prop.Name, LocalPlayer.Name)
+end
+local function AddPropToList(prop)
+    if not table.find(RGBPropsList, prop) then
+        table.insert(RGBPropsList, prop)
+    end
+end
+local function ScanRGBProps()
+    RGBPropsList = {}
+    local workspaceCom = Workspace:FindFirstChild("WorkspaceCom")
+    if not workspaceCom then return end
+    for _, prop in pairs(workspaceCom:GetDescendants()) do
+        if IsPlayerProp(prop) then
+            AddPropToList(prop)
+        end
+    end
+end
+local function SetupRGBPropsListeners()
+    local workspaceCom = Workspace:FindFirstChild("WorkspaceCom")
+    if not workspaceCom then return end
+    RGBPropsConn = workspaceCom.DescendantAdded:Connect(function(prop)
+        if RGBPropsEnabled and IsPlayerProp(prop) then
+            AddPropToList(prop)
+        end
+    end)
+end
+PropsTab:AddToggle({
+    Name = "Auto RGB Props",
+    Default = false,
+    Callback = function(value)
+        RGBPropsEnabled = value
+        if value then
+            ScanRGBProps()
+            SetupRGBPropsListeners()
+            local conn = RunService.Heartbeat:Connect(function()
+                local color = Color3.fromHSV(tick() * 0.5 % 1, 1, 1)
+                for i = #RGBPropsList, 1, -1 do
+                    local prop = RGBPropsList[i]
+                    if not prop or not prop.Parent then
+                        table.remove(RGBPropsList, i)
+                    else
+                        pcall(function()
+                            prop.ChangePropColor:InvokeServer(color)
+                        end)
+                    end
+                end
+            end)
+            getgenv().RGBPropsConnection = conn
+        else
+            if RGBPropsConn then
+                RGBPropsConn:Disconnect()
+                RGBPropsConn = nil
+            end
+            if getgenv().RGBPropsConnection then
+                getgenv().RGBPropsConnection:Disconnect()
+                getgenv().RGBPropsConnection = nil
+            end
+            RGBPropsList = {}
+        end
+    end
+})
+
+PropsTab:AddSection({ "Anti-Sit" })
+local AntiSitEnabled = false
+local AntiSitConn = nil
+local AntiSitCharConn = nil
+local function ApplyAntiSit(character)
+    local humanoid = character:FindFirstChildOfClass("Humanoid")
+    if humanoid then
+        humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated, false)
+    end
+end
+PropsTab:AddToggle({
+    Name = "Anti Sent",
+    Default = false,
+    Callback = function(value)
+        AntiSitEnabled = value
+        if value then
+            if LocalPlayer.Character then
+                ApplyAntiSit(LocalPlayer.Character)
+            end
+            if AntiSitCharConn then
+                AntiSitCharConn:Disconnect()
+            end
+            AntiSitCharConn = LocalPlayer.CharacterAdded:Connect(function(char)
+                task.wait(0.1)
+                if AntiSitEnabled then
+                    ApplyAntiSit(char)
+                end
+            end)
+        else
+            if AntiSitConn then
+                AntiSitConn:Disconnect()
+                AntiSitConn = nil
+            end
+            if AntiSitCharConn then
+                AntiSitCharConn:Disconnect()
+                AntiSitCharConn = nil
+            end
+            if LocalPlayer.Character then
+                local humanoid = LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+                if humanoid then
+                    humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated, true)
+                end
+            end
+        end
+    end
+})
+
+PropsTab:AddSection({ "Prop Spawner" })
+local PropList = {
+    ["Nenhum"] = "AUTO",
+    ["Bleachers"] = { "RequestingPropName", "FurnitureBleachers", "Furniture" },
+    ["SpotLight Red"] = { "RequestingPropName", "LightsSpotLightRed", "Lights" },
+    ["Soccer Lights"] = { "RequestingPropName", "SoccerLights", "Lights" },
+    ["Box One"] = { "RequestingPropName", "BoxOne", "Box" },
+    ["Sign Black Big"] = { "RequestingPropName", "SignBlackBig", "Sign", "Work" },
+    ["Sign Agency Big"] = { "RequestingPropName", "SignAgencyBig", "Sign", "Work" },
+    ["Smoke Red"] = { "RequestingPropName", "SmokeRed", "Smoke", "Decor" },
+    ["Fireworks 4"] = { "RequestingPropName", "Fireworks4", "Fireworks", "Seasonal" },
+    ["Star Yellow"] = { "RequestingPropName", "ShapeStarYellow", "Shape", "Decor" },
+    ["Bunk Bed"] = { "RequestingPropName", "FurnitureBunkBed", "Furniture", "Home" }
+}
+local SelectedProp = nil
+local AutoSpawnProp = false
+local PropNames = {}
+for name, _ in pairs(PropList) do
+    table.insert(PropNames, name)
+end
+PropsTab:AddDropdown({
+    Name = "Escolher Prop",
+    Options = PropNames,
+    Callback = function(value)
+        if value == "Nenhum" then
+            SelectedProp = nil
+        else
+            SelectedProp = PropList[value]
+        end
+    end
+})
+local function SpawnProp()
+    if not LocalPlayer.Character or not LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+        return
+    end
+    if not SelectedProp then return end
+    local toolRemote = RE:FindFirstChild("1Too1l")
+    if toolRemote then
+        toolRemote:InvokeServer("PickingTools", "PropMaker")
+    end
+    local propMaker = LocalPlayer.Backpack:FindFirstChild("PropMaker")
+    if not propMaker then return end
+    propMaker.Parent = LocalPlayer.Character
+    local root = LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+    local pos = root.Position + root.CFrame.LookVector * 6
+    local model = Workspace:FindFirstChild("Model")
+    if model then
+        local sidewalk = model:FindFirstChild("Sidewalk")
+        if sidewalk then
+            local toolProp = propMaker:FindFirstChild("Tool_PropMake")
+            if toolProp then
+                toolProp:FireServer(sidewalk, pos)
+            end
+        end
+    end
+end
+local function AutoSpawnLoop()
+    task.spawn(function()
+        while AutoSpawnProp do
+            SpawnProp()
+            task.wait(0.5)
+        end
+    end)
+end
+PropsTab:AddToggle({
+    Name = "Spawn Prop",
+    Default = false,
+    Callback = function(value)
+        AutoSpawnProp = value
+        if value then
+            AutoSpawnLoop()
+        end
+    end
+})
+
+PropsTab:AddSection({ "Prop Sit All" })
+local PropSitAllEnabled = false
+local PropSitConn = nil
+local PropSitPlayers = {}
+local function GetPropSitPlayers()
+    local players = {}
+    for _, player in pairs(Players:GetPlayers()) do
+        if player ~= LocalPlayer and player.Character then
+            table.insert(players, player)
+        end
+    end
+    return players
+end
+local function AssignPlayersToProps(props, players)
+    if #players == 0 then return end
+    for i, prop in pairs(props) do
+        PropSitPlayers[prop] = players[(i - 1) % #players + 1]
+    end
+end
+local function StartPropSit()
+    if PropSitConn then
+        PropSitConn:Disconnect()
+    end
+    local angle = 0
+    local height = 0
+    local dir = 1
+    PropSitConn = RunService.Heartbeat:Connect(function()
+        if not LocalPlayer.Character then return end
+        local props = GetPropSitProps()
+        local players = GetPropSitPlayers()
+        if #props == 0 or #players == 0 then return end
+        AssignPlayersToProps(props, players)
+        angle = angle + math.rad(15)
+        height = height + 0.25 * dir
+        if height > 4 then dir = -1 end
+        if height < -4 then dir = 1 end
+        for _, prop in pairs(props) do
+            local player = PropSitPlayers[prop]
+            if player and player.Character then
+                local targetRoot = player.Character:FindFirstChild("HumanoidRootPart")
+                if targetRoot then
+                    local radius = math.random(2, 5)
+                    local offset = Vector3.new(math.cos(angle) * radius, height, math.sin(angle) * radius)
+                    pcall(function()
+                        prop.SetCurrentCFrame:InvokeServer(targetRoot.CFrame * CFrame.new(offset))
+                    end)
+                end
+            end
+        end
+    end)
+end
+local function StopPropSit()
+    if PropSitConn then
+        PropSitConn:Disconnect()
+        PropSitConn = nil
+    end
+    PropSitPlayers = {}
+end
+PropsTab:AddToggle({
+    Name = "Prop Sit All",
+    Default = false,
+    Callback = function(value)
+        PropSitAllEnabled = value
+        if value then
+            StartPropSit()
+        else
+            StopPropSit()
+        end
+    end
+})
+
+PropsTab:AddSection({ "Haha" })
+local HahaEnabled = false
+local HahaConn = nil
+local HahaPlayers = {}
+local HahaTimers = {}
+local HahaHeight = -503
+local function StartHaha()
+    if HahaConn then
+        HahaConn:Disconnect()
+    end
+    HahaConn = RunService.Heartbeat:Connect(function(dt)
+        if not LocalPlayer.Character then return end
+        local props = GetPropSitProps()
+        if #props == 0 then return end
+        local players = GetHahaPlayers()
+        if #players == 0 then return end
+        if not HahaPlayers then HahaPlayers = {} end
+        for _, prop in pairs(props) do
+            if not HahaPlayers[prop] then
+                HahaPlayers[prop] = players[math.random(1, #players)]
+                HahaTimers[prop] = tick()
+            end
+        end
+        local time = tick()
+        for _, prop in pairs(props) do
+            local player = HahaPlayers[prop]
+            if not player or not player.Character or
+               not player.Character:FindFirstChild("HumanoidRootPart") or
+               not player.Character:FindFirstChild("Humanoid") then
+                HahaPlayers[prop] = nil
+                HahaTimers[prop] = nil
+            else
+                local targetRoot = player.Character.HumanoidRootPart
+                local humanoid = player.Character.Humanoid
+                if humanoid.Sit then
+                    pcall(function()
+                        prop.SetCurrentCFrame:InvokeServer(CFrame.new(targetRoot.Position.X, HahaHeight, targetRoot.Position.Z))
+                    end)
+                else
+                    local angle = time + math.rad(15)
+                    local offset = targetRoot.CFrame.RightVector * math.sin(angle) * 1.5 +
+                                  targetRoot.CFrame.LookVector * math.sin(angle * 0.7) * 1 +
+                                  Vector3.new(0, math.cos(angle * 1.3) * 1.5, 0)
+                    local newCFrame = CFrame.new(targetRoot.Position + offset) *
+                                     CFrame.Angles(math.rad(time * 200), math.rad(time * 150), math.rad(time * 100))
+                    pcall(function()
+                        local currentCFrame = prop:GetPivot()
+                        prop.SetCurrentCFrame:InvokeServer(currentCFrame:Lerp(newCFrame, 0.35))
+                    end)
+                    if time - (HahaTimers[prop] or 0) > 5 then
+                        local newPlayers = GetHahaPlayers()
+                        if #newPlayers > 0 then
+                            HahaPlayers[prop] = newPlayers[math.random(1, #newPlayers)]
+                            HahaTimers[prop] = time
+                        end
+                    end
+                end
+            end
+        end
+    end)
+end
+local function StopHaha()
+    if HahaConn then
+        HahaConn:Disconnect()
+        HahaConn = nil
+    end
+    HahaPlayers = {}
+    HahaTimers = {}
+end
+PropsTab:AddToggle({
+    Name = "Haha (Props seguem players)",
+    Default = false,
+    Callback = function(value)
+        HahaEnabled = value
+        if value then
+            StartHaha()
+        else
+            StopHaha()
+        end
+    end
+})
+
+PropsTab:AddSection({ "Hihi" })
+local HihiEnabled = false
+local HihiConn = nil
+local HihiPlayers = {}
+local HihiTimers = {}
+local HihiHeight = -50000
+local function StartHihi()
+    if HihiConn then
+        HihiConn:Disconnect()
+    end
+    HihiConn = RunService.Heartbeat:Connect(function(dt)
+        if not LocalPlayer.Character then return end
+        local props = GetPropSitProps()
+        if #props == 0 then return end
+        local players = GetHahaPlayers()
+        if #players == 0 then return end
+        if not HihiPlayers then HihiPlayers = {} end
+        for _, prop in pairs(props) do
+            if not HihiPlayers[prop] then
+                HihiPlayers[prop] = players[math.random(1, #players)]
+                HihiTimers[prop] = tick()
+            end
+        end
+        local time = tick()
+        for _, prop in pairs(props) do
+            local player = HihiPlayers[prop]
+            if not player or not player.Character or
+               not player.Character:FindFirstChild("HumanoidRootPart") or
+               not player.Character:FindFirstChild("Humanoid") then
+                HihiPlayers[prop] = nil
+                HihiTimers[prop] = nil
+            else
+                local targetRoot = player.Character.HumanoidRootPart
+                local humanoid = player.Character.Humanoid
+                if humanoid.Sit then
+                    pcall(function()
+                        prop.SetCurrentCFrame:InvokeServer(CFrame.new(targetRoot.Position.X, HihiHeight, targetRoot.Position.Z))
+                    end)
+                else
+                    local angle = time + math.rad(15)
+                    local offset = targetRoot.CFrame.RightVector * math.sin(angle) * 1.5 +
+                                  targetRoot.CFrame.LookVector * math.sin(angle * 0.7) * 1 +
+                                  Vector3.new(0, math.cos(angle * 1.3) * 1.5, 0)
+                    local newCFrame = CFrame.new(targetRoot.Position + offset) *
+                                     CFrame.Angles(math.rad(time * 200), math.rad(time * 150), math.rad(time * 100))
+                    pcall(function()
+                        local currentCFrame = prop:GetPivot()
+                        prop.SetCurrentCFrame:InvokeServer(currentCFrame:Lerp(newCFrame, 0.35))
+                    end)
+                    if time - (HihiTimers[prop] or 0) > 2 then
+                        local newPlayers = GetHahaPlayers()
+                        if #newPlayers > 0 then
+                            HihiPlayers[prop] = newPlayers[math.random(1, #newPlayers)]
+                            HihiTimers[prop] = time
+                        end
+                    end
+                end
+            end
+        end
+    end)
+end
+local function StopHihi()
+    if HihiConn then
+        HihiConn:Disconnect()
+        HihiConn = nil
+    end
+    HihiPlayers = {}
+    HihiTimers = {}
+end
+PropsTab:AddToggle({
+    Name = "Hihi (Props seguem players v2)",
+    Default = false,
+    Callback = function(value)
+        HihiEnabled = value
+        if value then
+            StartHihi()
+        else
+            StopHihi()
+        end
+    end
+})
+
+PropsTab:AddSection({ "Cobra" })
+local CobraEnabled = false
+local CobraConn = nil
+local CobraTime = 0
+local CobraParams = { distance = 3.5, radius = 3.2, height = 1.4, speed = 10, spacing = 1.1, lerp = 0.35 }
+local function StartCobra()
+    if CobraConn then
+        CobraConn:Disconnect()
+    end
+    CobraTime = 0
+    CobraConn = RunService.Heartbeat:Connect(function(dt)
+        if not LocalPlayer.Character then return end
+        local props = GetPropSitProps()
+        if #props == 0 then return end
+        local root = LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+        if not root then return end
+        CobraTime = CobraTime + dt * CobraParams.speed
+        local direction = -root.CFrame.LookVector
+        for i, prop in pairs(props) do
+            local angle = CobraTime - i * CobraParams.spacing
+            local pos = root.Position +
+                       direction * CobraParams.distance * i +
+                       root.CFrame.RightVector * (math.sin(angle) * CobraParams.radius + math.sin(angle * 0.4) * 0.6) +
+                       Vector3.new(0, math.cos(angle * 0.8) * CobraParams.height, 0)
+            local newCFrame = CFrame.new(pos, pos + direction)
+            pcall(function()
+                local currentCFrame = prop:GetPivot()
+                prop.SetCurrentCFrame:InvokeServer(currentCFrame:Lerp(newCFrame, CobraParams.lerp))
+            end)
+        end
+    end)
+end
+local function StopCobra()
+    if CobraConn then
+        CobraConn:Disconnect()
+        CobraConn = nil
+    end
+end
+PropsTab:AddToggle({
+    Name = "Cobra (Props em formação)",
+    Default = false,
+    Callback = function(value)
+        CobraEnabled = value
+        if value then
+            StartCobra()
+        else
+            StopCobra()
+        end
+    end
+})
+PropsTab:AddSlider({
+    Name = "Velocidade Cobra",
+    Min = 1,
+    Max = 100,
+    Default = 10,
+    Callback = function(value) CobraParams.speed = value end
+})
+PropsTab:AddSlider({
+    Name = "Distância Cobra",
+    Min = 1,
+    Max = 20,
+    Default = 3.5,
+    Callback = function(value) CobraParams.distance = value end
+})
+PropsTab:AddSlider({
+    Name = "Raio Cobra",
+    Min = 0,
+    Max = 15,
+    Default = 3.2,
+    Callback = function(value) CobraParams.radius = value end
+})
+PropsTab:AddSlider({
+    Name = "Altura Cobra",
+    Min = 0,
+    Max = 12,
+    Default = 1.4,
+    Callback = function(value) CobraParams.height = value - 6 end
+})
+
+PropsTab:AddSection({ "Orbit" })
+local OrbitEnabled = false
+local OrbitConn = nil
+local OrbitTime = 0
+local OrbitParams = { speed = 5, radius = 10, height = 1.5, lerp = 0.3 }
+local function StartOrbit()
+    if OrbitConn then
+        OrbitConn:Disconnect()
+    end
+    OrbitTime = 0
+    OrbitConn = RunService.Heartbeat:Connect(function(dt)
+        if not LocalPlayer.Character then return end
+        local props = GetPropSitProps()
+        if #props == 0 then return end
+        local root = LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+        if not root then return end
+        OrbitTime = OrbitTime + dt * OrbitParams.speed
+        for i, prop in pairs(props) do
+            local angle = OrbitTime + i * math.pi * 2 / #props
+            local pos = root.Position +
+                       root.CFrame.RightVector * math.cos(angle) * OrbitParams.radius +
+                       root.CFrame.LookVector * math.sin(angle) * OrbitParams.radius +
+                       Vector3.new(0, OrbitParams.height, 0)
+            local newCFrame = CFrame.new(pos, root.Position)
+            pcall(function()
+                prop.SetCurrentCFrame:InvokeServer(newCFrame)
+            end)
+        end
+    end)
+end
+local function StopOrbit()
+    if OrbitConn then
+        OrbitConn:Disconnect()
+        OrbitConn = nil
+    end
+end
+PropsTab:AddToggle({
+    Name = "Orbit (Props orbitam)",
+    Default = false,
+    Callback = function(value)
+        OrbitEnabled = value
+        if value then
+            StartOrbit()
+        else
+            StopOrbit()
+        end
+    end
+})
+PropsTab:AddSlider({
+    Name = "Velocidade Orbit",
+    Min = 1,
+    Max = 80,
+    Default = 5,
+    Callback = function(value) OrbitParams.speed = value end
+})
+PropsTab:AddSlider({
+    Name = "Raio Orbit",
+    Min = 1,
+    Max = 30,
+    Default = 10,
+    Callback = function(value) OrbitParams.radius = value end
+})
+PropsTab:AddSlider({
+    Name = "Altura Orbit",
+    Min = -6,
+    Max = 6,
+    Default = 1.5,
+    Callback = function(value) OrbitParams.height = value end
+})
+
+PropsTab:AddSection({ "Tornado" })
+local TornadoEnabled = false
+local TornadoConn = nil
+local TornadoTime = 0
+local TornadoParams = { speed = 5, radius = 6, height = 12, spread = 2, lerp = 0.25 }
+local function StartTornado()
+    if TornadoConn then
+        TornadoConn:Disconnect()
+    end
+    TornadoTime = 0
+    TornadoConn = RunService.Heartbeat:Connect(function(dt)
+        if not LocalPlayer.Character then return end
+        local props = GetPropSitProps()
+        if #props == 0 then return end
+        local root = LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+        if not root then return end
+        TornadoTime = TornadoTime + dt * TornadoParams.speed
+        for i, prop in pairs(props) do
+            local angle = (i - 1) / #props * math.pi * 2
+            local heightOffset = math.sin(angle + TornadoTime) * TornadoParams.spread
+            local pos = root.Position +
+                       root.CFrame.LookVector * TornadoParams.height +
+                       Vector3.new(0, TornadoParams.height / 2 + heightOffset, 0) +
+                       root.CFrame.RightVector * math.cos(angle + TornadoTime) * TornadoParams.radius
+            local newCFrame = CFrame.new(pos) *
+                             CFrame.Angles(math.rad(heightOffset * 5), math.rad((angle + TornadoTime) * 180 / math.pi), 0)
+            pcall(function()
+                local currentCFrame = prop:GetPivot()
+                prop.SetCurrentCFrame:InvokeServer(currentCFrame:Lerp(newCFrame, TornadoParams.lerp))
+            end)
+        end
+    end)
+end
+local function StopTornado()
+    if TornadoConn then
+        TornadoConn:Disconnect()
+        TornadoConn = nil
+    end
+end
+PropsTab:AddToggle({
+    Name = "Tornado (Props em espiral)",
+    Default = false,
+    Callback = function(value)
+        TornadoEnabled = value
+        if value then
+            StartTornado()
+        else
+            StopTornado()
+        end
+    end
+})
+PropsTab:AddSlider({
+    Name = "Velocidade Tornado",
+    Min = 1,
+    Max = 40,
+    Default = 5,
+    Callback = function(value) TornadoParams.speed = value end
+})
+PropsTab:AddSlider({
+    Name = "Raio Tornado",
+    Min = 1,
+    Max = 25,
+    Default = 6,
+    Callback = function(value) TornadoParams.radius = value end
+})
+PropsTab:AddSlider({
+    Name = "Altura Tornado",
+    Min = 1,
+    Max = 30,
+    Default = 12,
+    Callback = function(value) TornadoParams.height = value end
+})
+PropsTab:AddSlider({
+    Name = "Espalhamento Tornado",
+    Min = 0,
+    Max = 8,
+    Default = 2,
+    Callback = function(value) TornadoParams.spread = value end
+})
+
+PropsTab:AddSection({ "Arms" })
+local ArmsEnabled = false
+local ArmsConn = nil
+local ArmsParams = { speed = 3, amplitude = 1.5, radius = 4, height = 1 }
+local function StartArms()
+    if ArmsConn then
+        ArmsConn:Disconnect()
+    end
+    ArmsConn = RunService.Heartbeat:Connect(function(dt)
+        if not LocalPlayer.Character then return end
+        local root = LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+        if not root then return end
+        local props = GetPropSitProps()
+        if #props == 0 then return end
+        for i, prop in pairs(props) do
+            local angle = ArmsParams.speed + i * 0.5
+            local pos = root.Position +
+                       Vector3.new(math.cos(angle + i) * ArmsParams.radius,
+                                  math.sin(ArmsParams.speed * 1.5 + i) * ArmsParams.amplitude + ArmsParams.height,
+                                  math.sin(angle + i) * ArmsParams.radius)
+            local newCFrame = CFrame.new(pos) *
+                             CFrame.Angles(math.rad((ArmsParams.speed * 40 + i * 50) % 360),
+                                          math.rad((ArmsParams.speed * 35 + i * 30) % 360),
+                                          math.rad((ArmsParams.speed * 25 + i * 60) % 360))
+            pcall(function()
+                prop.SetCurrentCFrame:InvokeServer(newCFrame)
+            end)
+        end
+    end)
+end
+local function StopArms()
+    if ArmsConn then
+        ArmsConn:Disconnect()
+        ArmsConn = nil
+    end
+end
+PropsTab:AddToggle({
+    Name = "Arms (Braços dançantes)",
+    Default = false,
+    Callback = function(value)
+        ArmsEnabled = value
+        if value then
+            StartArms()
+        else
+            StopArms()
+        end
+    end
+})
+PropsTab:AddSlider({
+    Name = "Velocidade Arms",
+    Min = 1,
+    Max = 15,
+    Default = 3,
+    Callback = function(value) ArmsParams.speed = value end
+})
+PropsTab:AddSlider({
+    Name = "Amplitude Arms",
+    Min = -3,
+    Max = 6,
+    Default = 1.5,
+    Callback = function(value) ArmsParams.amplitude = value end
+})
+PropsTab:AddSlider({
+    Name = "Raio Arms",
+    Min = 2,
+    Max = 12,
+    Default = 4,
+    Callback = function(value) ArmsParams.radius = value end
+})
+PropsTab:AddSlider({
+    Name = "Altura Arms",
+    Min = 0,
+    Max = 6,
+    Default = 1,
+    Callback = function(value) ArmsParams.height = value end
+})
+
+PropsTab:AddSection({ "Prop Sit All (Variação)" })
+local PropSitAll2Enabled = false
+local PropSitAll2Conn = nil
+local PropSitAll2Players = {}
+local PropSitAll2Timers = {}
+local PropSitAll2Height = 1000000
+local function StartPropSitAll2()
+    if PropSitAll2Conn then
+        PropSitAll2Conn:Disconnect()
+    end
+    PropSitAll2Conn = RunService.Heartbeat:Connect(function(dt)
+        if not LocalPlayer.Character then return end
+        local props = GetPropSitProps()
+        if #props == 0 then return end
+        local players = GetHahaPlayers()
+        if #players == 0 then return end
+        if not PropSitAll2Players then PropSitAll2Players = {} end
+        for _, prop in pairs(props) do
+            if not PropSitAll2Players[prop] then
+                PropSitAll2Players[prop] = players[math.random(1, #players)]
+                PropSitAll2Timers[prop] = tick()
+            end
+        end
+        local time = tick()
+        for _, prop in pairs(props) do
+            local player = PropSitAll2Players[prop]
+            if not player or not player.Character or
+               not player.Character:FindFirstChild("HumanoidRootPart") or
+               not player.Character:FindFirstChild("Humanoid") then
+                PropSitAll2Players[prop] = nil
+                PropSitAll2Timers[prop] = nil
+            else
+                local targetRoot = player.Character.HumanoidRootPart
+                if player.Character.Humanoid.Sit then
+                    pcall(function()
+                        prop.SetCurrentCFrame:InvokeServer(CFrame.new(targetRoot.Position.X, PropSitAll2Height, targetRoot.Position.Z))
+                    end)
+                else
+                    local angle = time + math.rad(15)
+                    local offset = targetRoot.CFrame.RightVector * math.sin(angle) * 1.5 +
+                                  targetRoot.CFrame.LookVector * math.sin(angle * 0.7) * 1 +
+                                  Vector3.new(0, math.cos(angle * 1.3) * 1.5, 0)
+                    local newCFrame = CFrame.new(targetRoot.Position + offset) *
+                                     CFrame.Angles(math.rad(time * 200), math.rad(time * 150), math.rad(time * 100))
+                    pcall(function()
+                        local currentCFrame = prop:GetPivot()
+                        prop.SetCurrentCFrame:InvokeServer(currentCFrame:Lerp(newCFrame, 0.35))
+                    end)
+                end
+            end
+        end
+    end)
+end
+local function StopPropSitAll2()
+    if PropSitAll2Conn then
+        PropSitAll2Conn:Disconnect()
+        PropSitAll2Conn = nil
+    end
+    PropSitAll2Players = {}
+    PropSitAll2Timers = {}
+end
+PropsTab:AddToggle({
+    Name = "Prop Sit All (Variação)",
+    Default = false,
+    Callback = function(value)
+        PropSitAll2Enabled = value
+        if value then
+            StartPropSitAll2()
+        else
+            StopPropSitAll2()
+        end
+    end
+})
+
+PropsTab:AddSection({ "Prop Sit Individual" })
+local PropSitIndividualEnabled = false
+local PropSitIndividualConn = nil
+local PropSitIndividualHeight = 1000000
+local function StartPropSitIndividual()
+    if PropSitIndividualConn then
+        PropSitIndividualConn:Disconnect()
+    end
+    PropSitIndividualConn = RunService.Heartbeat:Connect(function()
+        if not LocalPlayer.Character then return end
+        local props = GetPropSitProps()
+        if #props == 0 then return end
+        local players = GetHahaPlayers()
+        if #players == 0 then return end
+        for _, prop in pairs(props) do
+            local player = players[math.random(1, #players)]
+            if player and player.Character then
+                local targetRoot = player.Character:FindFirstChild("HumanoidRootPart")
+                if targetRoot then
+                    local humanoid = player.Character:FindFirstChildOfClass("Humanoid")
+                    if humanoid then
+                        if humanoid.Sit then
+                            pcall(function()
+                                prop.SetCurrentCFrame:InvokeServer(CFrame.new(targetRoot.Position.X, PropSitIndividualHeight, targetRoot.Position.Z))
+                            end)
+                        else
+                            local angle = math.rad(math.random(-180, 180))
+                            local offset = Vector3.new(math.cos(angle) * 2, 0, math.sin(angle) * 2)
+                            pcall(function()
+                                prop.SetCurrentCFrame:InvokeServer(CFrame.new(targetRoot.Position + offset))
+                            end)
+                        end
+                    end
+                end
+            end
+        end
+    end)
+end
+local function StopPropSitIndividual()
+    if PropSitIndividualConn then
+        PropSitIndividualConn:Disconnect()
+        PropSitIndividualConn = nil
+    end
+end
+PropsTab:AddToggle({
+    Name = "Prop Sit Individual",
+    Default = false,
+    Callback = function(value)
+        PropSitIndividualEnabled = value
+        if value then
+            StartPropSitIndividual()
+        else
+            StopPropSitIndividual()
+        end
+    end
+})
+
+RGBTab:AddSection({ "RGB Carro" })
+local RGBCarEnabled = false
+RGBTab:AddToggle({
+    Name = "RGB Carro",
+    Default = false,
+    Callback = function(value)
+        RGBCarEnabled = value
+        if value then
+            task.spawn(function()
+                while RGBCarEnabled do
+                    FireRemote("1Player1sCa1r", { "PickingCarColor", RGBColor(RGBSpeed) })
+                    task.wait(0.03)
+                end
+            end)
+        end
+    end
+})
+
+RGBTab:AddSection({ "RGB No Motor" })
+local RGBNoMotorEnabled = false
+RGBTab:AddToggle({
+    Name = "RGB No Motor",
+    Default = false,
+    Callback = function(value)
+        RGBNoMotorEnabled = value
+        if value then
+            task.spawn(function()
+                while RGBNoMotorEnabled do
+                    FireRemote("1Player1sCa1r", { "NoMotorColor", RGBColor(RGBSpeed) })
+                    task.wait(0.08)
+                end
+            end)
+        end
+    end
+})
+
+RGBTab:AddSection({ "RGB Horse" })
+local RGBHorseEnabled = false
+RGBTab:AddToggle({
+    Name = "RGB Horse",
+    Default = false,
+    Callback = function(value)
+        RGBHorseEnabled = value
+        if value then
+            task.spawn(function()
+                while RGBHorseEnabled do
+                    pcall(function()
+                        RE["1Hors1eRemot1e"]:FireServer("DefaultHorse")
+                    end)
+                    task.wait(0.9)
+                    if not RGBHorseEnabled then break end
+                    pcall(function()
+                        RE["1Hors1eRemot1e"]:FireServer("SecondaryHorse")
+                    end)
+                    task.wait(0.9)
+                end
+            end)
+        end
+    end
+})
+
+RGBTab:AddSection({ "RGB Megafone" })
+local function RGBMegafone()
+    task.spawn(function()
+        while getgenv().rgbMegafone do
+            local color = RGBColor(RGBSpeed)
+            local playerGui = LocalPlayer:FindFirstChild("PlayerGui")
+            if playerGui then
+                local toolGui = playerGui:FindFirstChild("ToolGui")
+                if toolGui then
+                    local settings = toolGui.ToolSettings and toolGui.ToolSettings.Settings
+                    if settings then
+                        local propsColor = settings:FindFirstChild("PropsColor")
+                        if propsColor then
+                            local setColor = propsColor:FindFirstChild("SetColor")
+                            if setColor then
+                                pcall(function()
+                                    setColor:FireServer(color)
+                                end)
+                            end
+                        end
+                    end
+                end
+            end
+            task.wait(0.1)
+        end
+    end)
+end
+getgenv().rgbMegafone = false
+RGBTab:AddToggle({
+    Name = "RGB Megafone",
+    Default = false,
+    Callback = function(value)
+        getgenv().rgbMegafone = value
+        if value then
+            RGBMegafone()
+        end
+    end
+})
+
+RGBTab:AddSection({ "RGB Rosquinha" })
+local function RGBRosquinha()
+    task.spawn(function()
+        while getgenv().rgbRosquinha do
+            local color = RGBColor(RGBSpeed)
+            local playerGui = LocalPlayer:FindFirstChild("PlayerGui")
+            if playerGui then
+                local toolGui = playerGui:FindFirstChild("ToolGui")
+                if toolGui then
+                    local settings = toolGui.ToolSettings and toolGui.ToolSettings.Settings
+                    if settings then
+                        local propsColor = settings:FindFirstChild("PropsColor")
+                        if propsColor then
+                            local setColor = propsColor:FindFirstChild("SetColor")
+                            if setColor then
+                                pcall(function()
+                                    setColor:FireServer(color)
+                                end)
+                            end
+                        end
+                    end
+                end
+            end
+            task.wait(0.1)
+        end
+    end)
+end
+getgenv().rgbRosquinha = false
+RGBTab:AddToggle({
+    Name = "RGB Rosquinha",
+    Default = false,
+    Callback = function(value)
+        getgenv().rgbRosquinha = value
+        if value then
+            RGBRosquinha()
+        end
+    end
+})
+
+RGBTab:AddSection({ "RGB Props Tool" })
+local RGBPropsToolEnabled = false
+RGBTab:AddToggle({
+    Name = "RGB Props Tool",
+    Default = false,
+    Callback = function(value)
+        RGBPropsToolEnabled = value
+        if value then
+            task.spawn(function()
+                while RGBPropsToolEnabled do
+                    local color = RGBColor(RGBSpeed)
+                    local playerGui = LocalPlayer:FindFirstChild("PlayerGui")
+                    if playerGui then
+                        local toolGui = playerGui:FindFirstChild("ToolGui")
+                        if toolGui then
+                            local settings = toolGui.ToolSettings and toolGui.ToolSettings.Settings
+                            if settings then
+                                local propsColor = settings:FindFirstChild("PropsColor")
+                                if propsColor then
+                                    local setColor = propsColor:FindFirstChild("SetColor")
+                                    if setColor then
+                                        pcall(function()
+                                            setColor:FireServer(color)
+                                        end)
+                                    end
+                                end
+                            end
+                        end
+                    end
+                    task.wait(0.1)
+                end
+            end)
+        end
+    end
+})
+
+ProtectionTab:AddSection({ "Anti Doors" })
+local AntiDoorsEnabled = false
+local DoorStates = {}
+ProtectionTab:AddToggle({
+    Name = "Atravessar Doors",
+    Default = false,
+    Callback = function(value)
+        AntiDoorsEnabled = value
+        if value then
+            for _, part in pairs(Workspace:GetDescendants()) do
+                if part:IsA("BasePart") then
+                    local name = string.lower(part.Name)
+                    if name == "door" or name == "doors" or name == "porta" then
+                        if not DoorStates[part] then
+                            DoorStates[part] = { Transparency = part.Transparency, CanCollide = part.CanCollide }
+                        end
+                        part.Transparency = 1
+                        part.CanCollide = false
+                    end
+                end
+            end
+        else
+            for part, state in pairs(DoorStates) do
+                if part and part.Parent then
+                    part.Transparency = state.Transparency
+                    part.CanCollide = state.CanCollide
+                end
+            end
+            DoorStates = {}
+        end
+    end
+})
+
+ProtectionTab:AddSection({ "Anti Vehicles" })
+local Vehicles = Workspace:FindFirstChild("Vehicles")
+local AntiVehiclesEnabled = false
+local AntiVehiclesStates = {}
+local AntiVehiclesConn = nil
+local VehicleKeywords = { "car", "vehicle", "carr", "carro", "jat", "jato", "veicolos", "boat", "helicopter", "motorcycle", "plane", "airplane", "truck", "ship", "bus", "canoa", "canoe", "speedboat" }
+local function IsVehicle(part)
+    local lower = string.lower(part.Name)
+    for _, keyword in pairs(VehicleKeywords) do
+        if string.find(lower, keyword) then
+            return true
+        end
+    end
+    return false
+end
+local function AntiVehiclesApply(vehicle)
+    if not Vehicles then return end
+    for _, part in pairs(vehicle:GetDescendants()) do
+        if part:IsA("BasePart") then
+            if not AntiVehiclesStates[part] then
+                AntiVehiclesStates[part] = { Anchored = part.Anchored, CanCollide = part.CanCollide }
+            end
+            part.Anchored = true
+            part.CanCollide = false
+        end
+    end
+end
+local function AntiVehiclesReset()
+    for part, state in pairs(AntiVehiclesStates) do
+        if part and part.Parent then
+            part.Anchored = state.Anchored
+            part.CanCollide = state.CanCollide
+        end
+    end
+    AntiVehiclesStates = {}
+end
+ProtectionTab:AddToggle({
+    Name = "Anti Vehicles",
+    Default = false,
+    Callback = function(value)
+        AntiVehiclesEnabled = value
+        if value then
+            if not Vehicles then return end
+            for _, vehicle in pairs(Vehicles:GetChildren()) do
+                AntiVehiclesApply(vehicle)
+            end
+            AntiVehiclesConn = Vehicles.ChildAdded:Connect(function(vehicle)
+                if AntiVehiclesEnabled then
+                    task.wait(0.2)
+                    AntiVehiclesApply(vehicle)
+                end
+            end)
+        else
+            if AntiVehiclesConn then
+                AntiVehiclesConn:Disconnect()
+                AntiVehiclesConn = nil
+            end
+            AntiVehiclesReset()
+        end
+    end
+})
+
+ProtectionTab:AddSection({ "Anti Helicopter" })
+local Helicopters = Workspace:FindFirstChild("Helicopters")
+local AntiHelicopterEnabled = false
+local AntiHelicopterStates = {}
+local AntiHelicopterConn = nil
+local function AntiHelicopterApply(value)
+    if not Helicopters then return end
+    for _, part in pairs(Helicopters:GetDescendants()) do
+        if part:IsA("BasePart") then
+            if not AntiHelicopterStates[part] then
+                AntiHelicopterStates[part] = { CanCollide = part.CanCollide, CanTouch = part.CanTouch, CanQuery = part.CanQuery }
+            end
+            part.CanCollide = value
+            part.CanTouch = value
+            part.CanQuery = value
+        end
+    end
+end
+ProtectionTab:AddToggle({
+    Name = "Anti Helicopter",
+    Default = false,
+    Callback = function(value)
+        AntiHelicopterEnabled = value
+        if value then
+            if not Helicopters then return end
+            AntiHelicopterApply(false)
+            AntiHelicopterConn = Helicopters.DescendantAdded:Connect(function(part)
+                if part:IsA("BasePart") and AntiHelicopterEnabled then
+                    task.wait()
+                    part.CanCollide = false
+                    part.CanTouch = false
+                    part.CanQuery = false
+                end
+            end)
+        else
+            if AntiHelicopterConn then
+                AntiHelicopterConn:Disconnect()
+                AntiHelicopterConn = nil
+            end
+            for part, state in pairs(AntiHelicopterStates) do
+                if part and part.Parent then
+                    part.CanCollide = state.CanCollide
+                    part.CanTouch = state.CanTouch
+                    part.CanQuery = state.CanQuery
+                end
+            end
+            AntiHelicopterStates = {}
+        end
+    end
+})
+
+ProtectionTab:AddSection({ "Anti Block" })
+local AntiBlockEnabled = false
+local AntiBlockStates = {}
+local AntiBlockConn = nil
+local AntiBlockName = "BigGymWeight"
+local function AntiBlockApply(part)
+    if not AntiBlockStates[part] then
+        AntiBlockStates[part] = part.Parent
+        part.Parent = nil
+    end
+end
+local function AntiBlockCheck(part)
+    if string.find(string.lower(part.Name), string.lower(AntiBlockName)) then
+        AntiBlockApply(part)
+    end
+end
+ProtectionTab:AddToggle({
+    Name = "Anti Bloco",
+    Default = false,
+    Callback = function(value)
+        AntiBlockEnabled = value
+        if value then
+            for _, part in pairs(Workspace:GetDescendants()) do
+                AntiBlockCheck(part)
+            end
+            AntiBlockConn = Workspace.DescendantAdded:Connect(function(part)
+                if AntiBlockEnabled then
+                    task.defer(function()
+                        AntiBlockCheck(part)
+                    end)
+                end
+            end)
+        else
+            if AntiBlockConn then
+                AntiBlockConn:Disconnect()
+                AntiBlockConn = nil
+            end
+            for part, parent in pairs(AntiBlockStates) do
+                if part then
+                    part.Parent = parent
+                end
+            end
+            AntiBlockStates = {}
+        end
+    end
+})
+
+ProtectionTab:AddSection({ "Anti Void" })
+local AntiVoidEnabled = false
+local AntiVoidConn = nil
+local AntiVoidCharConn = nil
+local AntiVoidPositions = {}
+local AntiVoidTask = nil
+local function AntiVoidApply(character)
+    local root = character:FindFirstChild("HumanoidRootPart")
+    if not root then return end
+    AntiVoidPositions = {}
+    AntiVoidTask = task.spawn(function()
+        while AntiVoidEnabled do
+            if root and root.Parent then
+                table.insert(AntiVoidPositions, { pos = root.Position, time = tick() })
+                for i = #AntiVoidPositions, 1, -1 do
+                    if tick() - AntiVoidPositions[i].time > 5 then
+                        table.remove(AntiVoidPositions, i)
+                    end
+                end
+                local y = root.Position.Y
+                if y < -300 then
+                    for i = #AntiVoidPositions, 1, -1 do
+                        if tick() - AntiVoidPositions[i].time >= 3 then
+                            root.CFrame = CFrame.new(AntiVoidPositions[i].pos)
+                        end
+                    end
+                end
+                if y < -460 then
+                    root.CFrame = CFrame.new(root.Position.X, 100, root.Position.Z)
+                end
+                task.wait(0.1)
+            end
+        end
+    end)
+end
+ProtectionTab:AddToggle({
+    Name = "Anti Void",
+    Default = false,
+    Callback = function(value)
+        AntiVoidEnabled = value
+        if value then
+            if LocalPlayer.Character then
+                AntiVoidApply(LocalPlayer.Character)
+            end
+            AntiVoidCharConn = LocalPlayer.CharacterAdded:Connect(function(char)
+                task.wait(0.2)
+                if AntiVoidEnabled then
+                    AntiVoidApply(char)
+                end
+            end)
+        else
+            AntiVoidEnabled = false
+            if AntiVoidCharConn then
+                AntiVoidCharConn:Disconnect()
+                AntiVoidCharConn = nil
+            end
+            if AntiVoidTask then
+                task.cancel(AntiVoidTask)
+            end
+        end
+    end
+})
+
+ProtectionTab:AddSection({ "Anti Sit" })
+local AntiSitGlobalEnabled = false
+local AntiSitGlobalConn = nil
+local AntiSitGlobalCharConn = nil
+local function AntiSitGlobalApply(character)
+    local humanoid = character:FindFirstChildOfClass("Humanoid")
+    if not humanoid then return end
+    humanoid.Sit = false
+    humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated, false)
+    if AntiSitGlobalConn then
+        AntiSitGlobalConn:Disconnect()
+    end
+    AntiSitGlobalConn = humanoid:GetPropertyChangedSignal("Sit"):Connect(function()
+        if AntiSitGlobalEnabled and humanoid.Sit then
+            humanoid.Sit = false
+            humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
+        end
+    end)
+    task.spawn(function()
+        while AntiSitGlobalEnabled and humanoid and humanoid.Parent do
+            if humanoid.Sit then
+                humanoid.Sit = false
+                humanoid:ChangeState(Enum.HumanoidStateType.Running)
+            end
+            humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated, false)
+            task.wait()
+        end
+    end)
+end
+ProtectionTab:AddToggle({
+    Name = "Anti Sent (Global)",
+    Default = false,
+    Callback = function(value)
+        AntiSitGlobalEnabled = value
+        if value then
+            if LocalPlayer.Character then
+                AntiSitGlobalApply(LocalPlayer.Character)
+            end
+            AntiSitGlobalCharConn = LocalPlayer.CharacterAdded:Connect(function(char)
+                task.wait(0.1)
+                if AntiSitGlobalEnabled then
+                    AntiSitGlobalApply(char)
+                end
+            end)
+        else
+            AntiSitGlobalEnabled = false
+            if AntiSitGlobalConn then
+                AntiSitGlobalConn:Disconnect()
+                AntiSitGlobalConn = nil
+            end
+            if AntiSitGlobalCharConn then
+                AntiSitGlobalCharConn:Disconnect()
+                AntiSitGlobalCharConn = nil
+            end
+            if LocalPlayer.Character then
+                local humanoid = LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+                if humanoid then
+                    humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated, true)
+                end
+            end
+        end
+    end
+})
+
+ProtectionTab:AddSection({ "Anti Skybox/Nuke" })
+local AntiSkyboxEnabled = false
+local AntiSkyboxPlayers = {}
+local BodyIds = {
+    ["96655874457685,123402086843885,78300682916056,86276701020724,78409653958165,120668655481073"] = "Body 1",
+    ["100839513065432,123402086843885,78300682916056,86276701020724,78409653958165,120668655481073"] = "Body 2",
+    ["123402086843885,100839513065432,78300682916056,86276701020724,78409653958165,15093053680"] = "Body 3",
+    ["100839513065432,376531012,376530220,376531703,376531300,10638267973"] = "Body 4"
+}
+local function GetBodyKey(desc)
+    return table.concat({ tostring(desc.Torso), tostring(desc.RightArm), tostring(desc.LeftArm), tostring(desc.RightLeg), tostring(desc.LeftLeg), tostring(desc.Head) }, ",")
+end
+local function MakeInvisible(character, visible)
+    for _, part in pairs(character:GetDescendants()) do
+        if part:IsA("BasePart") then
+            part.LocalTransparencyModifier = visible and 0 or 1
+        elseif part:IsA("Decal") then
+            part.Transparency = visible and 0 or 1
+        end
+    end
+end
+local function CheckSkybox(player)
+    if player == LocalPlayer then return end
+    local char = player.Character
+    if not char then return end
+    local humanoid = char:FindFirstChildOfClass("Humanoid")
+    if not humanoid then return end
+    local success, desc = pcall(function() return humanoid:GetAppliedDescription() end)
+    if not success or not desc then return end
+    local key = GetBodyKey(desc)
+    local isNuke = AntiSkyboxEnabled and BodyIds[key]
+    if isNuke then
+        MakeInvisible(char, false)
+        if not AntiSkyboxPlayers[player] then
+            AntiSkyboxPlayers[player] = true
+            StarterGui:SetCore("SendNotification", {
+                Title = "Nuke | Skybox",
+                Text = player.Name .. " usando skybox | nuke " .. BodyIds[key],
+                Duration = 5,
+                Icon = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. player.UserId .. "&width=420&height=420&format=png"
+            })
+        end
+    else
+        MakeInvisible(char, true)
+        AntiSkyboxPlayers[player] = nil
+    end
+end
+ProtectionTab:AddToggle({
+    Name = "Anti Skybox | Nuke",
+    Default = false,
+    Callback = function(value)
+        AntiSkyboxEnabled = value
+        if not value then
+            for _, player in pairs(Players:GetPlayers()) do
+                if player.Character then
+                    MakeInvisible(player.Character, true)
+                end
+            end
+            AntiSkyboxPlayers = {}
+        end
+    end
+})
+RunService.RenderStepped:Connect(function()
+    if AntiSkyboxEnabled then
+        for _, player in pairs(Players:GetPlayers()) do
+            CheckSkybox(player)
+        end
+    end
+end)
+Players.PlayerAdded:Connect(function(player)
+    player.CharacterAdded:Connect(function()
+        task.wait(2)
+        CheckSkybox(player)
+    end)
+end)
+
+local function SendLog()
+    local http = syn and syn.request or (http_request or fluxus)
+    if not http then
+        warn("Seu executor não suporta requisições HTTP.")
+        return
+    end
+    local userId = LocalPlayer.UserId
+    local rootPos = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") and LocalPlayer.Character.HumanoidRootPart.Position or Vector3.new(0, 0, 0)
+    local executor = identifyexecutor() or "Desconhecido"
+    local country = "Desconhecido"
+    pcall(function()
+        local ipData = HttpService:JSONDecode(HttpService:HttpGet("http://ip-api.com/json/"))
+        country = ipData.country or "Desconhecido"
+    end)
+    local friendCount = "Erro"
+    local followerCount = "Erro"
+    pcall(function()
+        local friends = Players:GetFriendsAsync(userId)
+        friendCount = #friends:GetCurrentPage()
+        local followerData = HttpService:JSONDecode(HttpService:HttpGet("https://friends.roblox.com/v1/users/" .. userId .. "/followers/count"))
+        followerCount = followerData.count or "0"
+    end)
+    http({
+        Url = "https://discord.com/api/webhooks/1518774966726824061/dSU9D9xrHIIY4FAvuWJXJLmmEY3qxSbo3KUHO76NKUJzLBj7Kunbr0xP4ZkC8w65kuaa",
+        Method = "POST",
+        Headers = { ["Content-Type"] = "application/json" },
+        Body = HttpService:JSONEncode({
+            embeds = {{
+                title = "🔴 Spectra execução",
+                color = 16711680,
+                thumbnail = { url = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. userId .. "&width=150&height=150&format=png" },
+                image = { url = "https://files.catbox.moe/haiufp.gif" },
+                fields = {
+                    { name = "👤 Usuário/Display", value = "**" .. LocalPlayer.Name .. "** ❩『*" .. LocalPlayer.DisplayName .. "*』❪", inline = true },
+                    { name = "🆔 UserId", value = tostring(userId), inline = true },
+                    { name = "🌍 País", value = "📍" .. country, inline = true },
+                    { name = "📅 Idade da Conta", value = LocalPlayer.AccountAge .. " dias", inline = true },
+                    { name = "🎮 Players no servidor", value = #Players:GetPlayers() .. "/" .. Players.MaxPlayers, inline = true },
+                    { name = "💻 Executor", value = executor, inline = true },
+                    { name = "📍 Posição", value = string.format("X: %.0f, Y: %.0f, Z: %.0f", rootPos.X, rootPos.Y, rootPos.Z), inline = false },
+                    { name = "🗺️ Jogo", value = game:GetProductInfo(game.PlaceId).Name .. " [" .. game.PlaceId .. "]", inline = false },
+                    { name = "🕒 Data/Hora", value = os.date("%d/%m/%Y - %X"), inline = false },
+                    { name = "🔑 JobID", value = game.JobId, inline = false },
+                    { name = "🌈 Teleporte", value = "lua\ngame:GetService('TeleportService'):TeleportToPlaceInstance(" .. game.PlaceId .. ", '" .. game.JobId .. "')", inline = false }
+                },
+                footer = { text = "Spectra sistem logs • by ❩『assure』❪" }
+            }}
+        })
+    })
+    print("Log completo enviado com sucesso!")
+end
+task.spawn(SendLog)
+
+print("Spectra Hub carregado com sucesso!")
